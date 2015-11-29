@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"noEmitOnError": true,
+		"locale": "en-us",
+		"target": "ES5",
+		"sourceMap": true
+	}
+}
