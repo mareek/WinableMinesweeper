@@ -75,14 +75,15 @@ var readonlyMineCell = (function () {
     return readonlyMineCell;
 })();
 var mineField = (function () {
-    function mineField(height, width, mineCount) {
+    function mineField(rows, cols, mineCount) {
         var _this = this;
-        this.height = height;
-        this.width = width;
+        this.rows = rows;
+        this.cols = cols;
+        this._gameState = gameState.inProgress;
         this.grid = [];
-        for (var row = 0; row < height; row++) {
+        for (var row = 0; row < rows; row++) {
             this.grid[row] = [];
-            for (var col = 0; col < width; col++) {
+            for (var col = 0; col < cols; col++) {
                 this.grid[row][col] = new mineCell(row, col);
             }
         }
@@ -99,8 +100,8 @@ var mineField = (function () {
     mineField.prototype.fillGrid = function (mineCount) {
         var actualMineCount = 0;
         while (actualMineCount < mineCount) {
-            var row = Math.floor(Math.random() * this.height);
-            var col = Math.floor(Math.random() * this.width);
+            var row = Math.floor(Math.random() * this.rows);
+            var col = Math.floor(Math.random() * this.cols);
             var cell = this.grid[row][col];
             if (!cell.hasMine) {
                 cell.hasMine = true;
@@ -118,6 +119,9 @@ var mineField = (function () {
         var _this = this;
         return _.map(this.getAllCells(), function (c) { return new readonlyMineCell(c, _this._gameState); });
     };
+    mineField.prototype.getMineCell = function (row, col) {
+        return new readonlyMineCell(this.grid[row][col], this._gameState);
+    };
     mineField.prototype.flagCell = function (row, col) {
         var cell = this.grid[row][col];
         cell.hasFlag = !cell.hasFlag;
@@ -125,8 +129,8 @@ var mineField = (function () {
     mineField.prototype.uncoverCell = function (row, col) {
         var _this = this;
         var cell = this.grid[row][col];
-        if (cell.hasFlag) {
-            return;
+        if (cell.hasFlag || cell.isUncovered) {
+            return new readonlyMineCell(cell, this._gameState);
         }
         cell.isUncovered = true;
         if (cell.hasMine) {
@@ -134,12 +138,13 @@ var mineField = (function () {
         }
         else {
             if (cell.neighbourMineCount === 0) {
-                _.each(this.getAdjacentCells(cell), function (c) { return _this.uncoverCell(cell.row, cell.col); });
+                _.each(this.getAdjacentCells(cell), function (c) { return _this.uncoverCell(c.row, c.col); });
             }
             if (_.every(this.getAllCells(), function (c) { return c.hasMine || c.isUncovered; })) {
                 this._gameState = gameState.victory;
             }
         }
+        return new readonlyMineCell(cell, this._gameState);
     };
     mineField.prototype.uncoverNeighbours = function (row, col) {
         var _this = this;

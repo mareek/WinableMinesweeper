@@ -45,3 +45,9 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Typescript generated files
+*.js.map
+Launcher.js
+Solver.js
+Minesweeper.js
