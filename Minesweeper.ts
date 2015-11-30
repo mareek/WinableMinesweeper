@@ -1,9 +1,18 @@
 /// <reference path="underscore.d.ts" />
 
-enum moveResult {
-	uncover,
+enum gameState {
+	inProgress,
 	victory,
 	failure
+}
+
+enum mineState {
+	covered,
+	uncovered,
+	flagged,
+	incorrectlyFlagged,
+	mine,
+	mineDetonated
 }
 
 class mineCell {
@@ -12,7 +21,9 @@ class mineCell {
 	hasFlag: boolean;
 	isUncovered: boolean;
 
-	constructor(public row: number, public col: number) { }
+	constructor(public row: number, public col: number) {
+		this.neighbourMineCount = 0;
+	}
 
 	isAdjacent(other: mineCell): boolean {
 		return other.col >= (this.col - 1)
@@ -22,9 +33,46 @@ class mineCell {
 	}
 }
 
+class readonlyMineCell {
+	private _row: number;
+	get row(): number { return this._row; }
+
+	private _col: number;
+	get col(): number { return this._col; }
+
+	private _neighbourMineCount: number;
+	get neighbourMineCount(): number { return this._neighbourMineCount; }
+
+	private _state: mineState;
+	get state(): mineState { return this._state; }
+
+	constructor(cell: mineCell, currentGameState: gameState) {
+		this._row = cell.row;
+		this._col = cell.col;
+		this._neighbourMineCount = cell.neighbourMineCount;
+
+		if (cell.isUncovered && !cell.hasMine) {
+			this._state = mineState.uncovered
+		} else if (cell.hasMine && cell.isUncovered) {
+			this._state = mineState.mineDetonated;
+		} else if (currentGameState === gameState.inProgress && cell.hasFlag) {
+			this._state = mineState.flagged;
+		} else if (currentGameState !== gameState.inProgress && cell.hasMine) {
+			this._state = mineState.mine;
+		} else if (currentGameState === gameState.failure && cell.hasFlag && !cell.hasMine) {
+			this._state = mineState.incorrectlyFlagged;
+		} else {
+			this._state = mineState.covered;
+		}
+	}
+}
+
 class mineField {
 	private grid: mineCell[][]; // Indexed by [rows][columns]
 	
+	private _gameState: gameState;
+	public get gameState(): gameState { return this._gameState; }
+
 	constructor(public height: number, public width: number, mineCount: number) {
 		this.grid = [];
 		for (var row = 0; row < height; row++) {
@@ -35,11 +83,10 @@ class mineField {
 		}
 
 		this.fillGrid(mineCount);
-		_.each(this.getAllCells(), this.setCellInfo);
-	}
 
-	private getAllCells(): mineCell[] {
-		return _.flatten(this.grid, true);
+		_.chain(this.getAllCells())
+			.where(c => !c.hasMine)
+			.each(cell => cell.neighbourMineCount = _.filter(this.getAdjacentCells(cell), c => c.hasMine).length);
 	}
 
 	private fillGrid(mineCount: number) {
@@ -55,41 +102,48 @@ class mineField {
 		}
 	}
 
-	private setCellInfo(cell: mineCell) {
-		if (!cell.hasMine) {
-			cell.neighbourMineCount = _.filter(this.getAdjacentCells(cell), c => c.hasMine).length;
-		}
+	private getAllCells(): mineCell[] {
+		return _.flatten(this.grid, true);
 	}
-
+	
 	private getAdjacentCells(cell: mineCell): mineCell[] {
 		return _.filter(this.getAllCells(), c => cell.isAdjacent(c));
 	}
+	
+	public getMineField() : readonlyMineCell[] {
+		return _.map(this.getAllCells(), c=> new readonlyMineCell(c, this._gameState));
+	}
 
-	public uncoverCell(row: number, col: number): moveResult {
+	public flagCell(row: number, col: number) {
 		var cell = this.grid[row][col];
+		cell.hasFlag = !cell.hasFlag;
+	}
 
+	public uncoverCell(row: number, col: number) {
+		var cell = this.grid[row][col];
 		if (cell.hasFlag) {
-			return moveResult.uncover;
-		} else {
-			cell.isUncovered = true;
-			if (cell.hasMine) {
-				return moveResult.failure;
-			} else {
-				if (cell.neighbourMineCount === 0) {
-					_.each(this.getAdjacentCells(cell), c => this.uncoverCell(cell.row, cell.col));
-				}
+			return;
+		}
 
-				if (_.every(this.getAllCells(), c => c.hasMine || c.isUncovered)) {
-					return moveResult.victory;
-				} else {
-					return moveResult.uncover;
-				}
+		cell.isUncovered = true;
+		if (cell.hasMine) {
+			this._gameState = gameState.failure;
+		} else {
+			if (cell.neighbourMineCount === 0) {
+				_.each(this.getAdjacentCells(cell), c => this.uncoverCell(cell.row, cell.col));
+			}
+
+			if (_.every(this.getAllCells(), c => c.hasMine || c.isUncovered)) {
+				this._gameState = gameState.victory;
 			}
 		}
 	}
-	
-	public flagCell(row: number, col: number) {
+
+	public uncoverNeighbours(row: number, col: number) {
 		var cell = this.grid[row][col];
-		cell.hasFlag = !cell.hasFlag;		
+		var adjacentcells = this.getAdjacentCells(cell);
+		if (!cell.hasFlag && _.filter(adjacentcells, c => c.hasFlag).length === cell.neighbourMineCount) {
+			_.each(adjacentcells, c => this.uncoverCell(c.row, c.col));
+		}
 	}
 }
