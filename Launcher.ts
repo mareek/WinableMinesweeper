@@ -33,7 +33,8 @@ function createRow(row: number, cols: number, createNewField: () => mineField): 
 function createCell(row: number, col: number, createNewField: () => mineField): JQuery {
 	return $('<td>', {
 		'id': 'cell-' + row + '-' + col,
-		click: e => clickCell(row, col, e, createNewField)
+		mousedown: e => clickCell(row, col, e, createNewField),
+		contextmenu: e => false
 	});
 }
 
@@ -42,15 +43,17 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject, crea
 		do {
 			field = createNewField();
 		} while (field.uncoverCell(row, col).neighbourMineCount !== 0 || field.gameState === gameState.failure)
-	} else if (event.button === 0) {
+	} else if (event.which === 1) {
 		field.uncoverCell(row, col);
-	} else if (event.button === 1) {
+	} else if (event.which === 3) {
 		field.flagCell(row, col);
-	} else if (event.button === 2) {
+	} else if (event.which === 2) {
 		field.uncoverNeighbours(row, col);
 	}
 
 	showMineField(field.rows, field.cols);
+	
+	return false;
 }
 
 function showMineField(rows: number, cols: number) {
