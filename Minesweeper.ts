@@ -115,10 +115,6 @@ class mineField {
 		return _.map(this.getAllCells(), c=> new readonlyMineCell(c, this._gameState));
 	}
 
-	public getMineCell(row: number, col: number): readonlyMineCell {
-		return new readonlyMineCell(this.grid[row][col], this._gameState);
-	}
-
 	public flagCell(row: number, col: number) {
 		var cell = this.grid[row][col];
 		cell.hasFlag = !cell.hasFlag;

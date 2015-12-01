@@ -1,12 +1,16 @@
 /// <reference path="underscore.d.ts" />
 /// <reference path="jquery.d.ts" />
 /// <reference path="Minesweeper.ts" />
+/// <reference path="Solver.ts" />
+
 var field: mineField;
+var solver: minesweeperSolver;
 
 $(() => {
 	$('#easyButton').click(e=> initMineField(9, 9, 10));
 	$('#mediumButton').click(e=> initMineField(16, 16, 40));
 	$('#hardButton').click(e=> initMineField(16, 30, 99));
+	$('#helpButton').click(() => help());
 });
 
 function initMineField(rows: number, cols: number, mineCount: number) {
@@ -38,6 +42,20 @@ function createCell(row: number, col: number, createNewField: () => mineField): 
 	});
 }
 
+function help() {
+	if (!field) {
+		return;
+	}
+
+	if (!solver) {
+		solver = new minesweeperSolver(field);
+	}
+
+	if (solver.playNextStep()) {
+		showMineField();
+	}
+}
+
 function clickCell(row: number, col: number, event: JQueryMouseEventObject, createNewField: () => mineField) {
 	if (!field) {
 		do {
@@ -51,12 +69,12 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject, crea
 		field.uncoverNeighbours(row, col);
 	}
 
-	showMineField(field.rows, field.cols);
-	
+	showMineField();
+
 	return false;
 }
 
-function showMineField(rows: number, cols: number) {
+function showMineField(rows?: number, cols?: number) {
 	if (!field) {
 		for (var row = 0; row < rows; row++) {
 			for (var col = 0; col < cols; col++) {
