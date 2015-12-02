@@ -15,6 +15,7 @@ $(() => {
 
 function initMineField(rows: number, cols: number, mineCount: number) {
 	field = null;
+	solver = null;
 	var createNewField = () => new mineField(rows, cols, mineCount);
 	var mineFieldTable = $('#mineFieldTable');
 	$('tr').remove();
@@ -82,28 +83,23 @@ function showMineField(rows?: number, cols?: number) {
 			}
 		}
 	} else {
-		_.each(field.getMineField(), cell => {
-			var td = $('#cell-' + cell.row + '-' + cell.col);
-			switch (cell.state) {
-				case mineState.covered:
-					td.html('');
-					break;
-				case mineState.uncovered:
-					td.html((cell.neighbourMineCount === 0) ? '_' : cell.neighbourMineCount.toString());
-					break;
-				case mineState.mine:
-					td.html('*');
-					break;
-				case mineState.mineDetonated:
-					td.html('#');
-					break;
-				case mineState.flagged:
-					td.html('@');
-					break;
-				case mineState.incorrectlyFlagged:
-					td.html('X');
-					break;
-			}
-		});
+		_.each(field.getMineField(), cell => $('#cell-' + cell.row + '-' + cell.col).html(getCellContent(cell)));
+	}
+}
+
+function getCellContent(cell: readonlyMineCell): string {
+	switch (cell.state) {
+		case mineState.covered:
+			return '';
+		case mineState.uncovered:
+			return (cell.neighbourMineCount === 0) ? '_' : cell.neighbourMineCount.toString();
+		case mineState.mine:
+			return '*';
+		case mineState.mineDetonated:
+			return '#';
+		case mineState.flagged:
+			return '@';
+		case mineState.incorrectlyFlagged:
+			return 'X';
 	}
 }

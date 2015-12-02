@@ -31,7 +31,20 @@ class minesweeperSolver {
 	}
 
 	private uncoverOneCell(): boolean {
-		return false;
+		var allCells = this.minefield.getMineField();
+		var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
+		return _.some(uncoveredCells, cell => {
+			var neighbours = this.getAdjacentCells(cell, allCells);
+			var flaggedNeighbours = _.filter(neighbours, c=> c.state === mineState.flagged);
+			var coveredNeighbours = _.filter(neighbours, c=> c.state === mineState.covered);
+			if (coveredNeighbours.length > 0 && cell.neighbourMineCount === flaggedNeighbours.length) {
+				var cellToUncover = coveredNeighbours[0]
+				this.minefield.uncoverCell(cellToUncover.row, cellToUncover.col);
+				return true;
+			} else {
+				return false;
+			}
+		});
 	}
 
 	private getAdjacentCells(cell: readonlyMineCell, allcells: readonlyMineCell[]): readonlyMineCell[] {
