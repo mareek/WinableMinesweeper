@@ -10,7 +10,7 @@ $(() => {
 	$('#easyButton').click(e=> initMineField(9, 9, 10));
 	$('#mediumButton').click(e=> initMineField(16, 16, 40));
 	$('#hardButton').click(e=> initMineField(16, 30, 99));
-	$('#helpButton').click(() => help());
+	$('#autoplayButton').click(() => autoplay());
 });
 
 function initMineField(rows: number, cols: number, mineCount: number) {
@@ -43,17 +43,10 @@ function createCell(row: number, col: number, createNewField: () => mineField): 
 	});
 }
 
-function help() {
-	if (!field) {
-		return;
-	}
-
-	if (!solver) {
-		solver = new minesweeperSolver(field);
-	}
-
-	if (solver.playNextStep()) {
+function autoplay() {
+	if (solver && solver.playNextStep()) {
 		showMineField();
+		window.setTimeout(autoplay, 100);
 	}
 }
 
@@ -61,6 +54,7 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject, crea
 	if (!field) {
 		do {
 			field = createNewField();
+			solver = new minesweeperSolver(field);
 		} while (field.uncoverCell(row, col).neighbourMineCount !== 0 || field.gameState === gameState.failure)
 	} else if (event.which === 1) {
 		field.uncoverCell(row, col);
