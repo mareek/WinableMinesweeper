@@ -65,6 +65,13 @@ class readonlyMineCell {
 			this._state = mineState.covered;
 		}
 	}
+
+	isAdjacent(other: readonlyMineCell): boolean {
+		return other.col >= (this.col - 1)
+			&& other.col <= (this.col + 1)
+			&& other.row >= (this.row - 1)
+			&& other.row <= (this.row + 1);
+	}
 }
 
 class mineField {
