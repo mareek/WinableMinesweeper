@@ -44,7 +44,7 @@ function createCell(row: number, col: number, createNewField: () => mineField): 
 }
 
 function autoplay() {
-	if (solver && solver.playNextStep()) {
+	if (solver && field.gameState === gameState.inProgress && solver.playNextStep()) {
 		showMineField();
 		window.setTimeout(autoplay, 100);
 	}
@@ -73,27 +73,52 @@ function showMineField(rows?: number, cols?: number) {
 	if (!field) {
 		for (var row = 0; row < rows; row++) {
 			for (var col = 0; col < cols; col++) {
-				$('#cell-' + row + '-' + col).html('');
+				showCell(row, col, getCellContent(mineState.covered, 0));
 			}
 		}
 	} else {
-		_.each(field.getMineField(), cell => $('#cell-' + cell.row + '-' + cell.col).html(getCellContent(cell)));
+		_.each(field.getMineField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
 	}
 }
 
-function getCellContent(cell: readonlyMineCell): string {
-	switch (cell.state) {
+function showCell(row: number, col: number, backgroundPosition: string) {
+	$('#cell-' + row + '-' + col).css("background-position", backgroundPosition);
+}
+
+function getCellContent(state: mineState, neighbourMineCount: number): string {
+	switch (state) {
 		case mineState.covered:
-			return '';
+			return '-90px 0px';
 		case mineState.uncovered:
-			return (cell.neighbourMineCount === 0) ? '_' : cell.neighbourMineCount.toString();
+			switch (neighbourMineCount) {
+				case 0:
+					return '-90px -30px';
+				case 1:
+					return '-90px -90px';
+				case 2:
+					return '-90px -60px';
+				case 3:
+					return '-60px -90px';
+				case 4:
+					return '-60px -30px';
+				case 5:
+					return '0px -60px';
+				case 6:
+					return '-30px -30px';
+				case 7:
+					return '-115px -115px';
+				case 8:
+					return '-115px -115px';
+				default:
+					return '-90px 0px';
+			}
 		case mineState.mine:
-			return '*';
+			return '0px 0px';
 		case mineState.mineDetonated:
-			return '#';
+			return '-30px 0px';
 		case mineState.flagged:
-			return '@';
+			return '-60px 0px';
 		case mineState.incorrectlyFlagged:
-			return 'X';
+			return '0px -30px';
 	}
 }

@@ -4,12 +4,19 @@
 <head>
 	<title>Minesweeper</title>
 	<style>
+		table {
+			border-spacing: 0;	
+		}
+		
 		td {
-			height: 20px;
-			width: 20px;
-			background-color: bisque;
+			padding: 0;
+			height: 30px;
+			width: 30px;
 			text-align: center;
 			vertical-align: middle;
+			background-image: url(minecells.png);
+			background-size: 120px; 
+			background-position: -90px 0px; 
 		}
 	</style>
 </head>
@@ -20,10 +27,10 @@
 	<button id="easyButton">Easy</button>
 	<button id="mediumButton">Medium</button>
 	<button id="hardButton">Hard</button>
+	<button id="autoplayButton">Auto play</button>
 
 	<table id="mineFieldTable"></table>
 
-	<button id="autoplayButton">Auto play</button>
 
 	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
