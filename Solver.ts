@@ -9,7 +9,7 @@ class minesweeperSolver {
 	}
 
 	public playNextStep(): boolean {
-		var allCells = this.minefield.getMineField();
+		var allCells = _.values(_.shuffle(this.minefield.getMineField()));
 		var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
 		return _.some(uncoveredCells, cell => {
 			var neighbours = this.getAdjacentCells(cell, allCells);

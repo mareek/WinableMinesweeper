@@ -100,8 +100,8 @@ class mineField {
 	private fillGrid(mineCount: number) {
 		var actualMineCount = 0;
 		while (actualMineCount < mineCount) {
-			var row = Math.floor(Math.random() * this.rows);
-			var col = Math.floor(Math.random() * this.cols);
+			var row = _.random(this.rows - 1);
+			var col = _.random(this.cols - 1);
 			var cell = this.grid[row][col];
 			if (!cell.hasMine) {
 				cell.hasMine = true;
