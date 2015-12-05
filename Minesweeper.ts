@@ -118,6 +118,15 @@ class mineField {
 		return _.filter(this.getAllCells(), c => cell.isAdjacent(c));
 	}
 
+	public getSafeStart(): readonlyMineCell {
+		return _.chain(this.getAllCells())
+			.filter(c=> !c.hasMine && c.neighbourMineCount === 0)
+			.map(c=> new readonlyMineCell(c, this._gameState))
+			.shuffle()
+			.first()
+			.value();
+	}
+
 	public getMineField(): readonlyMineCell[] {
 		return _.map(this.getAllCells(), c=> new readonlyMineCell(c, this._gameState));
 	}

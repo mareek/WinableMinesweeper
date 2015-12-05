@@ -3,8 +3,12 @@
 /// <reference path="Minesweeper.ts" />
 /// <reference path="Solver.ts" />
 
-var field: mineField;
-var solver: minesweeperSolver;
+var _field: mineField;
+var _solver: minesweeperSolver;
+
+var _cols = 0;
+var _rows = 0;
+var _mineCount = 0;
 
 $(() => {
 	$('#easyButton').click(e=> initMineField(9, 9, 10));
@@ -14,54 +18,63 @@ $(() => {
 });
 
 function initMineField(rows: number, cols: number, mineCount: number) {
-	field = null;
-	solver = null;
-	var createNewField = () => new mineField(rows, cols, mineCount);
+	_field = null;
+	_solver = null;
+	_cols = cols;
+	_rows = rows;
+	_mineCount = mineCount;
+
 	var mineFieldTable = $('#mineFieldTable');
 	$('tr').remove();
 	for (var row = 0; row < rows; row++) {
-		mineFieldTable.append(createRow(row, cols, createNewField));
+		var tr = $('<tr>');
+		for (var col = 0; col < cols; col++) {
+			tr.append(createCell(row, col));
+		}
+		
+		mineFieldTable.append(tr);
 	}
 
 	showMineField(rows, cols);
 }
 
-function createRow(row: number, cols: number, createNewField: () => mineField): JQuery {
-	var tr = $('<tr>');
-	for (var col = 0; col < cols; col++) {
-		tr.append(createCell(row, col, createNewField));
-	}
-
-	return tr;
-}
-
-function createCell(row: number, col: number, createNewField: () => mineField): JQuery {
+function createCell(row: number, col: number): JQuery {
 	return $('<td>', {
 		'id': 'cell-' + row + '-' + col,
-		mousedown: e => clickCell(row, col, e, createNewField),
+		mousedown: e => clickCell(row, col, e),
 		contextmenu: e => false
 	});
 }
 
 function autoplay() {
-	if (solver && field.gameState === gameState.inProgress && solver.playNextStep()) {
+	if (!_field && _rows !== 0) {
+		createField();
+		var startCell = _field.getSafeStart();
+		_field.uncoverCell(startCell.row, startCell.col);
+	}
+
+	if (_solver && _field.gameState === gameState.inProgress && _solver.playNextStep()) {
 		showMineField();
 		window.setTimeout(autoplay, 100);
 	}
 }
 
-function clickCell(row: number, col: number, event: JQueryMouseEventObject, createNewField: () => mineField) {
-	if (!field) {
+function createField() {
+	_field = new mineField(_rows, _cols, _mineCount);
+	_solver = new minesweeperSolver(_field);
+}
+
+function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
+	if (!_field) {
 		do {
-			field = createNewField();
-			solver = new minesweeperSolver(field);
-		} while (field.uncoverCell(row, col).neighbourMineCount !== 0 || field.gameState === gameState.failure)
+			createField()
+		} while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure)
 	} else if (event.which === 1) {
-		field.uncoverCell(row, col);
+		_field.uncoverCell(row, col);
 	} else if (event.which === 3) {
-		field.flagCell(row, col);
+		_field.flagCell(row, col);
 	} else if (event.which === 2) {
-		field.uncoverNeighbours(row, col);
+		_field.uncoverNeighbours(row, col);
 	}
 
 	showMineField();
@@ -70,14 +83,14 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject, crea
 }
 
 function showMineField(rows?: number, cols?: number) {
-	if (!field) {
+	if (!_field) {
 		for (var row = 0; row < rows; row++) {
 			for (var col = 0; col < cols; col++) {
 				showCell(row, col, getCellContent(mineState.covered, 0));
 			}
 		}
 	} else {
-		_.each(field.getMineField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
+		_.each(_field.getMineField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
 	}
 }
 
