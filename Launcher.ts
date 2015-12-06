@@ -11,10 +11,11 @@ var _rows = 0;
 var _mineCount = 0;
 
 $(() => {
-	$('#easyButton').click(e=> initMineField(9, 9, 10));
-	$('#mediumButton').click(e=> initMineField(16, 16, 40));
-	$('#hardButton').click(e=> initMineField(16, 30, 99));
+	$('#easyButton').click(() => initMineField(9, 9, 10));
+	$('#mediumButton').click(() => initMineField(16, 16, 40));
+	$('#hardButton').click(() => initMineField(16, 30, 99));
 	$('#autoplayButton').click(() => autoplay());
+	$('#instantAutoplayButton').click(() => instantAutoplay());
 });
 
 function initMineField(rows: number, cols: number, mineCount: number) {
@@ -31,7 +32,7 @@ function initMineField(rows: number, cols: number, mineCount: number) {
 		for (var col = 0; col < cols; col++) {
 			tr.append(createCell(row, col));
 		}
-		
+
 		mineFieldTable.append(tr);
 	}
 
@@ -48,9 +49,7 @@ function createCell(row: number, col: number): JQuery {
 
 function autoplay() {
 	if (!_field && _rows !== 0) {
-		createField();
-		var startCell = _field.getSafeStart();
-		_field.uncoverCell(startCell.row, startCell.col);
+		createField(true);
 	}
 
 	if (_solver && _field.gameState === gameState.inProgress && _solver.playNextStep()) {
@@ -59,15 +58,30 @@ function autoplay() {
 	}
 }
 
-function createField() {
+function instantAutoplay() {
+	if (!_field && _rows !== 0) {
+		createField(true);
+	}
+
+	if (_solver && _field.gameState === gameState.inProgress) {
+		_solver.uncoverGrid();
+		showMineField();
+	}
+}
+
+function createField(withSafeStart: boolean) {
 	_field = new mineField(_rows, _cols, _mineCount);
 	_solver = new minesweeperSolver(_field);
+	if (withSafeStart) {
+		var startCell = _field.getSafeStart();
+		_field.uncoverCell(startCell.row, startCell.col);
+	}
 }
 
 function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
 	if (!_field) {
 		do {
-			createField()
+			createField(false)
 		} while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure)
 	} else if (event.which === 1) {
 		_field.uncoverCell(row, col);
