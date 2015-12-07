@@ -40,6 +40,8 @@ class readonlyMineCell {
 	private _col: number;
 	get col(): number { return this._col; }
 
+	get id(): string { return this._row + "¤" + this._col; }
+
 	private _neighbourMineCount: number;
 	get neighbourMineCount(): number { return this._neighbourMineCount; }
 
