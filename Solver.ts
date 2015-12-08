@@ -14,13 +14,19 @@ class minesweeperSolver {
 		return _.some(uncoveredCells, cell => this.playEsayMoves(cell, allCells, true));
 	}
 
+	public playNextHardStep(): boolean {
+		var allCells = _.values(_.shuffle(this.minefield.getMineField()));
+		var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
+		return _.some(uncoveredCells, cell => this.playHardMoves(cell, allCells, true));
+	}
+
 	public uncoverGrid() {
 		var hasMoved = false;
 		do {
 			var allCells = this.minefield.getMineField();
 			var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
 			hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEsayMoves(cell, allCells, false)))
-						|| this.playHardMoves(uncoveredCells, allCells, false);
+			|| this.playHardMoves(uncoveredCells, allCells, false);
 		} while (hasMoved)
 	}
 
@@ -54,7 +60,7 @@ class minesweeperSolver {
 			var flaggedNeighbours = _.filter(neighbours, c=> c.state === mineState.flagged);
 			var coveredNeighbours = _.filter(neighbours, c=> c.state === mineState.covered);
 			var remainingCount = cell.neighbourMineCount - flaggedNeighbours.length;
-			if (remainingCount > coveredNeighbours.length) {
+			if (remainingCount < coveredNeighbours.length) {
 				var zone = new minedZone(remainingCount, coveredNeighbours);
 				minedZonesById[zone.id] = zone;
 			}
@@ -65,13 +71,17 @@ class minesweeperSolver {
 				var zone = minedZonesById[zoneId];
 				var other = minedZonesById[otherId];
 				if (zone.intersect(other)) {
-					var otherCellsInZone = _.intersection(zone.cells, other.cells);
 					var cellsNotInOtherZone = _.difference(zone.cells, other.cells);
 					var mineCountInOtherZone = zone.mineCount - cellsNotInOtherZone.length;
-					if (mineCountInOtherZone = other.mineCount) {
-						_.each(cellsNotInOtherZone, c=> this.minefield.flagCell(c.row, c.col));
+					if (mineCountInOtherZone == other.mineCount) {
+						if (returnOnFirstAction) {
+							this.minefield.flagCell(cellsNotInOtherZone[0].row, cellsNotInOtherZone[0].col);
+						} else {
+							_.each(cellsNotInOtherZone, c=> this.minefield.flagCell(c.row, c.col));
+						}
 						return true;
 					}
+					var otherCellsNotInZone = _.difference(other.cells, zone.cells);
 				}
 			}
 		}
