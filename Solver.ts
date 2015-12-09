@@ -11,13 +11,8 @@ class minesweeperSolver {
     public playNextStep(): boolean {
         var allCells = _.values(_.shuffle(this.minefield.getMineField()));
         var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
-        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, allCells, true));
-    }
-
-    public playNextHardStep(): boolean {
-        var allCells = _.values(_.shuffle(this.minefield.getMineField()));
-        var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
-        return this.playHardMoves(uncoveredCells, allCells, true);
+        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, allCells, true))
+               || this.playHardMoves(uncoveredCells, allCells, true);
     }
 
     public uncoverGrid() {
@@ -81,7 +76,17 @@ class minesweeperSolver {
                         }
                         return true;
                     }
+
                     var otherCellsNotInZone = _.difference(other.cells, zone.cells);
+                    var otherMineCountInZone = other.mineCount - otherCellsNotInZone.length;
+                    if (otherMineCountInZone == zone.mineCount && cellsNotInOtherZone.length > 0) {
+                        if (returnOnFirstAction) {
+                            this.minefield.uncoverCell(cellsNotInOtherZone[0].row, cellsNotInOtherZone[0].col);
+                        } else {
+                            _.each(cellsNotInOtherZone, c=> this.minefield.uncoverCell(c.row, c.col));
+                        }
+                        return true;
+                    }
                 }
             }
         }

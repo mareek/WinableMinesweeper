@@ -15,7 +15,6 @@ $(() => {
     $('#mediumButton').click(() => initMineField(16, 16, 40));
     $('#hardButton').click(() => initMineField(16, 30, 99));
     $('#autoplayButton').click(() => autoplay());
-    $('#autoplayHardButton').click(() => autoplayHard());
     $('#instantAutoplayButton').click(() => instantAutoplay());
 });
 
@@ -56,13 +55,6 @@ function autoplay() {
     if (_solver && _field.gameState === gameState.inProgress && _solver.playNextStep()) {
         showMineField();
         window.setTimeout(autoplay, 100);
-    }
-}
-
-function autoplayHard() {
-    if (_solver && _field.gameState === gameState.inProgress) {
-        _solver.playNextHardStep()
-        showMineField();
     }
 }
 
