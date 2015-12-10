@@ -133,9 +133,14 @@ class mineField {
         return _.map(this.getAllCells(), c=> new readonlyMineCell(c, this._gameState));
     }
 
-    public flagCell(row: number, col: number) {
+    public toggleFlagOnCell(row: number, col: number) {
         var cell = this.grid[row][col];
         cell.hasFlag = !cell.hasFlag;
+    }
+
+    public forceFlagOnCell(row: number, col: number) {
+        var cell = this.grid[row][col];
+        cell.hasFlag = true;
     }
 
     public uncoverCell(row: number, col: number): readonlyMineCell {

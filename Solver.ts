@@ -12,7 +12,7 @@ class minesweeperSolver {
         var allCells = _.values(_.shuffle(this.minefield.getMineField()));
         var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
         return _.some(uncoveredCells, cell => this.playEsayMoves(cell, allCells, true))
-               || this.playHardMoves(uncoveredCells, allCells, true);
+            || this.playHardMoves(uncoveredCells, allCells, true);
     }
 
     public uncoverGrid() {
@@ -22,7 +22,7 @@ class minesweeperSolver {
             var uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered)
             hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEsayMoves(cell, allCells, false)))
             || this.playHardMoves(uncoveredCells, allCells, false);
-        } while (hasMoved)
+        } while (hasMoved && this.minefield.gameState === gameState.inProgress)
     }
 
     private playEsayMoves(cell: readonlyMineCell, allCells: readonlyMineCell[], returnOnFirstAction: boolean): boolean {
@@ -34,7 +34,7 @@ class minesweeperSolver {
         if (coveredNeighbours.length > 0 && cell.neighbourMineCount === (flaggedNeighbours.length + coveredNeighbours.length)) {
             for (var i = 0; i < coveredNeighbours.length && !(result && returnOnFirstAction); i++) {
                 var cellToFlag = coveredNeighbours[i];
-                this.minefield.flagCell(cellToFlag.row, cellToFlag.col);
+                this.minefield.forceFlagOnCell(cellToFlag.row, cellToFlag.col);
                 result = true;
             }
         } else if (coveredNeighbours.length > 0 && cell.neighbourMineCount === flaggedNeighbours.length) {
@@ -55,7 +55,7 @@ class minesweeperSolver {
             var flaggedNeighbours = _.filter(neighbours, c=> c.state === mineState.flagged);
             var coveredNeighbours = _.filter(neighbours, c=> c.state === mineState.covered);
             var remainingCount = cell.neighbourMineCount - flaggedNeighbours.length;
-            if (remainingCount < coveredNeighbours.length) {
+            if (remainingCount > 0 && remainingCount < coveredNeighbours.length) {
                 var zone = new minedZone(remainingCount, coveredNeighbours);
                 minedZonesById[zone.id] = zone;
             }
@@ -70,9 +70,9 @@ class minesweeperSolver {
                     var mineCountInOtherZone = zone.mineCount - cellsNotInOtherZone.length;
                     if (mineCountInOtherZone == other.mineCount && cellsNotInOtherZone.length > 0) {
                         if (returnOnFirstAction) {
-                            this.minefield.flagCell(cellsNotInOtherZone[0].row, cellsNotInOtherZone[0].col);
+                            this.minefield.forceFlagOnCell(cellsNotInOtherZone[0].row, cellsNotInOtherZone[0].col);
                         } else {
-                            _.each(cellsNotInOtherZone, c=> this.minefield.flagCell(c.row, c.col));
+                            _.each(cellsNotInOtherZone, c=> this.minefield.forceFlagOnCell(c.row, c.col));
                         }
                         return true;
                     }

@@ -86,7 +86,7 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
     } else if (event.which === 1) {
         _field.uncoverCell(row, col);
     } else if (event.which === 3) {
-        _field.flagCell(row, col);
+        _field.toggleFlagOnCell(row, col);
     } else if (event.which === 2) {
         _field.uncoverNeighbours(row, col);
     }
