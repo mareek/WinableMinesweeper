@@ -15,7 +15,6 @@ $(() => {
     $('#mediumButton').click(() => initMineField(16, 16, 40, true));
     $('#hardButton').click(() => initMineField(16, 30, 99, true));
     $('#autoplayButton').click(() => autoplay());
-    $('#instantAutoplayButton').click(() => instantAutoplay());
 });
 
 function initMineField(rows: number, cols: number, mineCount: number, winable? : boolean) {
@@ -59,17 +58,6 @@ function autoplay() {
     if (_solver && _field.gameState === gameState.inProgress && _solver.playNextStep()) {
         showMineField();
         window.setTimeout(autoplay, 100);
-    }
-}
-
-function instantAutoplay() {
-    if (!_field && _rows !== 0) {
-        createField(true);
-    }
-
-    if (_solver && _field.gameState === gameState.inProgress) {
-        _solver.uncoverGrid();
-        showMineField();
     }
 }
 
