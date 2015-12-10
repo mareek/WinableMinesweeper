@@ -12,13 +12,13 @@ var _mineCount = 0;
 
 $(() => {
     $('#easyButton').click(() => initMineField(9, 9, 10));
-    $('#mediumButton').click(() => initMineField(16, 16, 40));
-    $('#hardButton').click(() => initMineField(16, 30, 99));
+    $('#mediumButton').click(() => initMineField(16, 16, 40, true));
+    $('#hardButton').click(() => initMineField(16, 30, 99, true));
     $('#autoplayButton').click(() => autoplay());
     $('#instantAutoplayButton').click(() => instantAutoplay());
 });
 
-function initMineField(rows: number, cols: number, mineCount: number) {
+function initMineField(rows: number, cols: number, mineCount: number, winable? : boolean) {
     _field = null;
     _solver = null;
     _cols = cols;
@@ -34,6 +34,10 @@ function initMineField(rows: number, cols: number, mineCount: number) {
         }
 
         mineFieldTable.append(tr);
+    }
+    
+    if (winable) {
+        createField(true);
     }
 
     showMineField(rows, cols);
@@ -70,12 +74,24 @@ function instantAutoplay() {
 }
 
 function createField(withSafeStart: boolean) {
-    _field = new mineField(_rows, _cols, _mineCount);
-    _solver = new minesweeperSolver(_field);
-    if (withSafeStart) {
-        var startCell = _field.getSafeStart();
-        _field.uncoverCell(startCell.row, startCell.col);
-    }
+    var isWinable = false
+    do {
+        _field = new mineField(_rows, _cols, _mineCount);
+        _solver = new minesweeperSolver(_field);
+        if (withSafeStart) {
+            var startCell = _field.getSafeStart();
+            isWinable = isFieldWinableFromPosition(startCell.row, startCell.col);
+            _field.uncoverCell(startCell.row, startCell.col);
+        }
+    } while (withSafeStart && !isWinable)
+}
+
+function isFieldWinableFromPosition(row: number, col: number): boolean {
+    _field.uncoverCell(row, col);
+    _solver.uncoverGrid();
+    var result = _field.gameState === gameState.victory;
+    _field.reset();
+    return result;
 }
 
 function clickCell(row: number, col: number, event: JQueryMouseEventObject) {

@@ -172,4 +172,13 @@ class mineField {
             _.each(adjacentcells, c => this.uncoverCell(c.row, c.col));
         }
     }
+
+    public reset() {
+        this._gameState = gameState.inProgress;
+
+        _.each(this.getAllCells(), cell=> {
+            cell.hasFlag = false;
+            cell.isUncovered = false;
+        });
+    }
 }
