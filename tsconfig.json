@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"noEmitOnError": true,
 		"locale": "en-us",
-		"target": "ES5",
+		"target": "es5",
 		"sourceMap": true
 	}
 }

@@ -17,7 +17,7 @@ $(() => {
     $('#autoplayButton').click(() => autoplay());
 });
 
-function initMineField(rows: number, cols: number, mineCount: number, winable? : boolean) {
+function initMineField(rows: number, cols: number, mineCount: number, winable?: boolean) {
     _field = null;
     _solver = null;
     _cols = cols;
@@ -34,7 +34,7 @@ function initMineField(rows: number, cols: number, mineCount: number, winable? :
 
         mineFieldTable.append(tr);
     }
-    
+
     if (winable) {
         createField(true);
     }
@@ -46,6 +46,7 @@ function createCell(row: number, col: number): JQuery {
     return $('<td>', {
         'id': 'cell-' + row + '-' + col,
         mousedown: e => clickCell(row, col, e),
+        dblclick: e => doubleClickCell(row, col),
         contextmenu: e => false
     });
 }
@@ -98,6 +99,13 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
     showMineField();
 
     return false;
+}
+
+function doubleClickCell(row: number, col: number) {
+    if (_field) {
+        _field.uncoverNeighbours(row, col);
+        showMineField();
+    }
 }
 
 function showMineField(rows?: number, cols?: number) {
