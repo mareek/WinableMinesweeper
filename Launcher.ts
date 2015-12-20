@@ -27,10 +27,10 @@ function initMineField(rows: number, cols: number, mineCount: number, winable?: 
     _rows = rows;
     _mineCount = mineCount;
 
-    let mineFieldTable = $("#mineFieldTable");
+    const mineFieldTable = $("#mineFieldTable");
     $("tr").remove();
     for (let row = 0; row < rows; row++) {
-        let tr = $("<tr>");
+        const tr = $("<tr>");
         for (let col = 0; col < cols; col++) {
             tr.append(createCell(row, col));
         }
@@ -76,7 +76,7 @@ function createField(withSafeStart: boolean) {
         _field = new MineField(_rows, _cols, _mineCount);
         _solver = new MinesweeperSolver(_field);
         if (withSafeStart) {
-            let startCell = _field.getSafeStart();
+            const startCell = _field.getSafeStart();
             isWinable = isFieldWinableFromPosition(startCell.row, startCell.col);
             _field.uncoverCell(startCell.row, startCell.col);
         }
@@ -86,7 +86,7 @@ function createField(withSafeStart: boolean) {
 function isFieldWinableFromPosition(row: number, col: number): boolean {
     _field.uncoverCell(row, col);
     _solver.uncoverGrid();
-    let result = _field.gameState === gameState.victory;
+    const result = _field.gameState === gameState.victory;
     _field.reset();
     return result;
 }

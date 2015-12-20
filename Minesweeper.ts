@@ -102,9 +102,9 @@ class MineField {
     private fillGrid(mineCount: number) {
         let actualMineCount = 0;
         while (actualMineCount < mineCount) {
-            let row = _.random(this.rows - 1);
-            let col = _.random(this.cols - 1);
-            let cell = this.grid[row][col];
+            const row = _.random(this.rows - 1);
+            const col = _.random(this.cols - 1);
+            const cell = this.grid[row][col];
             if (!cell.hasMine) {
                 cell.hasMine = true;
                 actualMineCount++;
@@ -134,17 +134,17 @@ class MineField {
     }
 
     public toggleFlagOnCell(row: number, col: number) {
-        let cell = this.grid[row][col];
+        const cell = this.grid[row][col];
         cell.hasFlag = !cell.hasFlag && !cell.isUncovered;
     }
 
     public forceFlagOnCell(row: number, col: number) {
-        let cell = this.grid[row][col];
+        const cell = this.grid[row][col];
         cell.hasFlag = true;
     }
 
     public uncoverCell(row: number, col: number): ReadonlyMineCell {
-        let cell = this.grid[row][col];
+        const cell = this.grid[row][col];
         if (cell.hasFlag || cell.isUncovered) {
             return new ReadonlyMineCell(cell, this._gameState);
         }
@@ -166,8 +166,8 @@ class MineField {
     }
 
     public uncoverNeighbours(row: number, col: number) {
-        let cell = this.grid[row][col];
-        let adjacentcells = this.getAdjacentCells(cell);
+        const cell = this.grid[row][col];
+        const adjacentcells = this.getAdjacentCells(cell);
         if (!cell.hasFlag && _.filter(adjacentcells, c => c.hasFlag).length === cell.neighbourMineCount) {
             _.each(adjacentcells, c => this.uncoverCell(c.row, c.col));
         }
