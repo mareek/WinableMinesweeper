@@ -15,7 +15,7 @@ enum mineState {
     mineDetonated
 }
 
-class mineCell {
+class MineCell {
     hasMine: boolean;
     neighbourMineCount: number;
     hasFlag: boolean;
@@ -25,7 +25,7 @@ class mineCell {
         this.neighbourMineCount = 0;
     }
 
-    isAdjacent(other: mineCell): boolean {
+    isAdjacent(other: MineCell): boolean {
         return other.col >= (this.col - 1)
             && other.col <= (this.col + 1)
             && other.row >= (this.row - 1)
@@ -33,7 +33,7 @@ class mineCell {
     }
 }
 
-class readonlyMineCell {
+class ReadonlyMineCell {
     private _row: number;
     get row(): number { return this._row; }
 
@@ -48,13 +48,13 @@ class readonlyMineCell {
     private _state: mineState;
     get state(): mineState { return this._state; }
 
-    constructor(cell: mineCell, currentGameState: gameState) {
+    constructor(cell: MineCell, currentGameState: gameState) {
         this._row = cell.row;
         this._col = cell.col;
         this._neighbourMineCount = cell.neighbourMineCount;
 
         if (cell.isUncovered && !cell.hasMine) {
-            this._state = mineState.uncovered
+            this._state = mineState.uncovered;
         } else if (cell.hasMine && cell.isUncovered) {
             this._state = mineState.mineDetonated;
         } else if (currentGameState === gameState.inProgress && cell.hasFlag) {
@@ -68,7 +68,7 @@ class readonlyMineCell {
         }
     }
 
-    isAdjacent(other: readonlyMineCell): boolean {
+    isAdjacent(other: ReadonlyMineCell): boolean {
         return other.col >= (this.col - 1)
             && other.col <= (this.col + 1)
             && other.row >= (this.row - 1)
@@ -76,19 +76,19 @@ class readonlyMineCell {
     }
 }
 
-class mineField {
-    private grid: mineCell[][]; // Indexed by [rows][columns]
-	
+class MineField {
+    private grid: MineCell[][]; // Indexed by [rows][columns]
+
     private _gameState: gameState;
     public get gameState(): gameState { return this._gameState; }
 
     constructor(public rows: number, public cols: number, mineCount: number) {
         this._gameState = gameState.inProgress;
         this.grid = [];
-        for (var row = 0; row < rows; row++) {
+        for (let row = 0; row < rows; row++) {
             this.grid[row] = [];
-            for (var col = 0; col < cols; col++) {
-                this.grid[row][col] = new mineCell(row, col);
+            for (let col = 0; col < cols; col++) {
+                this.grid[row][col] = new MineCell(row, col);
             }
         }
 
@@ -100,11 +100,11 @@ class mineField {
     }
 
     private fillGrid(mineCount: number) {
-        var actualMineCount = 0;
+        let actualMineCount = 0;
         while (actualMineCount < mineCount) {
-            var row = _.random(this.rows - 1);
-            var col = _.random(this.cols - 1);
-            var cell = this.grid[row][col];
+            let row = _.random(this.rows - 1);
+            let col = _.random(this.cols - 1);
+            let cell = this.grid[row][col];
             if (!cell.hasMine) {
                 cell.hasMine = true;
                 actualMineCount++;
@@ -112,41 +112,41 @@ class mineField {
         }
     }
 
-    private getAllCells(): mineCell[] {
+    private getAllCells(): MineCell[] {
         return _.flatten(this.grid, true);
     }
 
-    private getAdjacentCells(cell: mineCell): mineCell[] {
+    private getAdjacentCells(cell: MineCell): MineCell[] {
         return _.filter(this.getAllCells(), c => cell.isAdjacent(c));
     }
 
-    public getSafeStart(): readonlyMineCell {
+    public getSafeStart(): ReadonlyMineCell {
         return _.chain(this.getAllCells())
-            .filter(c=> !c.hasMine && c.neighbourMineCount === 0)
-            .map(c=> new readonlyMineCell(c, this._gameState))
+            .filter(c => !c.hasMine && c.neighbourMineCount === 0)
+            .map(c => new ReadonlyMineCell(c, this._gameState))
             .shuffle()
             .first()
             .value();
     }
 
-    public getMineField(): readonlyMineCell[] {
-        return _.map(this.getAllCells(), c=> new readonlyMineCell(c, this._gameState));
+    public getMineField(): ReadonlyMineCell[] {
+        return _.map(this.getAllCells(), c => new ReadonlyMineCell(c, this._gameState));
     }
 
     public toggleFlagOnCell(row: number, col: number) {
-        var cell = this.grid[row][col];
+        let cell = this.grid[row][col];
         cell.hasFlag = !cell.hasFlag && !cell.isUncovered;
     }
 
     public forceFlagOnCell(row: number, col: number) {
-        var cell = this.grid[row][col];
+        let cell = this.grid[row][col];
         cell.hasFlag = true;
     }
 
-    public uncoverCell(row: number, col: number): readonlyMineCell {
-        var cell = this.grid[row][col];
+    public uncoverCell(row: number, col: number): ReadonlyMineCell {
+        let cell = this.grid[row][col];
         if (cell.hasFlag || cell.isUncovered) {
-            return new readonlyMineCell(cell, this._gameState);
+            return new ReadonlyMineCell(cell, this._gameState);
         }
 
         cell.isUncovered = true;
@@ -162,12 +162,12 @@ class mineField {
             }
         }
 
-        return new readonlyMineCell(cell, this._gameState);
+        return new ReadonlyMineCell(cell, this._gameState);
     }
 
     public uncoverNeighbours(row: number, col: number) {
-        var cell = this.grid[row][col];
-        var adjacentcells = this.getAdjacentCells(cell);
+        let cell = this.grid[row][col];
+        let adjacentcells = this.getAdjacentCells(cell);
         if (!cell.hasFlag && _.filter(adjacentcells, c => c.hasFlag).length === cell.neighbourMineCount) {
             _.each(adjacentcells, c => this.uncoverCell(c.row, c.col));
         }
@@ -176,7 +176,7 @@ class mineField {
     public reset() {
         this._gameState = gameState.inProgress;
 
-        _.each(this.getAllCells(), cell=> {
+        _.each(this.getAllCells(), cell => {
             cell.hasFlag = false;
             cell.isUncovered = false;
         });

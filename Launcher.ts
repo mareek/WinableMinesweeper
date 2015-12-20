@@ -3,21 +3,21 @@
 /// <reference path="Minesweeper.ts" />
 /// <reference path="Solver.ts" />
 
-var _flagMode = false;
+let _flagMode = false;
 
-var _field: mineField;
-var _solver: minesweeperSolver;
+let _field: MineField;
+let _solver: MinesweeperSolver;
 
-var _cols = 0;
-var _rows = 0;
-var _mineCount = 0;
+let _cols = 0;
+let _rows = 0;
+let _mineCount = 0;
 
 $(() => {
-    $('#easyButton').click(() => initMineField(9, 9, 10));
-    $('#mediumButton').click(() => initMineField(16, 16, 40, true));
-    $('#hardButton').click(() => initMineField(16, 30, 99, true));
-    $('#autoplayButton').click(() => autoplay());
-    $('#flagButton').click(() => toggleFlagMode());
+    $("#easyButton").click(() => initMineField(9, 9, 10));
+    $("#mediumButton").click(() => initMineField(16, 16, 40, true));
+    $("#hardButton").click(() => initMineField(16, 30, 99, true));
+    $("#autoplayButton").click(() => autoplay());
+    $("#flagButton").click(() => toggleFlagMode());
 });
 
 function initMineField(rows: number, cols: number, mineCount: number, winable?: boolean) {
@@ -27,11 +27,11 @@ function initMineField(rows: number, cols: number, mineCount: number, winable?: 
     _rows = rows;
     _mineCount = mineCount;
 
-    var mineFieldTable = $('#mineFieldTable');
-    $('tr').remove();
-    for (var row = 0; row < rows; row++) {
-        var tr = $('<tr>');
-        for (var col = 0; col < cols; col++) {
+    let mineFieldTable = $("#mineFieldTable");
+    $("tr").remove();
+    for (let row = 0; row < rows; row++) {
+        let tr = $("<tr>");
+        for (let col = 0; col < cols; col++) {
             tr.append(createCell(row, col));
         }
 
@@ -46,8 +46,8 @@ function initMineField(rows: number, cols: number, mineCount: number, winable?: 
 }
 
 function createCell(row: number, col: number): JQuery {
-    return $('<td>', {
-        'id': 'cell-' + row + '-' + col,
+    return $("<td>", {
+        "id": "cell-" + row + "-" + col,
         mousedown: e => clickCell(row, col, e),
         dblclick: e => doubleClickCell(row, col),
         contextmenu: e => false
@@ -71,22 +71,22 @@ function toggleFlagMode() {
 }
 
 function createField(withSafeStart: boolean) {
-    var isWinable = false
+    let isWinable = false;
     do {
-        _field = new mineField(_rows, _cols, _mineCount);
-        _solver = new minesweeperSolver(_field);
+        _field = new MineField(_rows, _cols, _mineCount);
+        _solver = new MinesweeperSolver(_field);
         if (withSafeStart) {
-            var startCell = _field.getSafeStart();
+            let startCell = _field.getSafeStart();
             isWinable = isFieldWinableFromPosition(startCell.row, startCell.col);
             _field.uncoverCell(startCell.row, startCell.col);
         }
-    } while (withSafeStart && !isWinable)
+    } while (withSafeStart && !isWinable);
 }
 
 function isFieldWinableFromPosition(row: number, col: number): boolean {
     _field.uncoverCell(row, col);
     _solver.uncoverGrid();
-    var result = _field.gameState === gameState.victory;
+    let result = _field.gameState === gameState.victory;
     _field.reset();
     return result;
 }
@@ -96,8 +96,8 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
         return false;
     } else if (!_field) {
         do {
-            createField(false)
-        } while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure)
+            createField(false);
+        } while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure);
     } else if (_flagMode || event.which === 3) {
         _field.toggleFlagOnCell(row, col);
     } else if (event.which === 1) {
@@ -120,8 +120,8 @@ function doubleClickCell(row: number, col: number) {
 
 function showMineField(rows?: number, cols?: number) {
     if (!_field) {
-        for (var row = 0; row < rows; row++) {
-            for (var col = 0; col < cols; col++) {
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
                 showCell(row, col, getCellContent(mineState.covered, 0));
             }
         }
@@ -131,43 +131,43 @@ function showMineField(rows?: number, cols?: number) {
 }
 
 function showCell(row: number, col: number, backgroundPosition: string) {
-    $('#cell-' + row + '-' + col).css("background-position", backgroundPosition);
+    $("#cell-" + row + "-" + col).css("background-position", backgroundPosition);
 }
 
 function getCellContent(state: mineState, neighbourMineCount: number): string {
     switch (state) {
         case mineState.covered:
-            return _flagMode ? '-30px -60px' : '-90px 0px';
+            return _flagMode ? "-30px -60px" : "-90px 0px";
         case mineState.uncovered:
             switch (neighbourMineCount) {
                 case 0:
-                    return '-90px -30px';
+                    return "-90px -30px";
                 case 1:
-                    return '-90px -90px';
+                    return "-90px -90px";
                 case 2:
-                    return '-90px -60px';
+                    return "-90px -60px";
                 case 3:
-                    return '-60px -90px';
+                    return "-60px -90px";
                 case 4:
-                    return '-60px -30px';
+                    return "-60px -30px";
                 case 5:
-                    return '0px -60px';
+                    return "0px -60px";
                 case 6:
-                    return '-30px -30px';
+                    return "-30px -30px";
                 case 7:
-                    return '0px -90px';
+                    return "0px -90px";
                 case 8:
-                    return '-60px -60px';
+                    return "-60px -60px";
                 default:
-                    return '-90px -30px';
+                    return "-90px -30px";
             }
         case mineState.mine:
-            return '0px 0px';
+            return "0px 0px";
         case mineState.mineDetonated:
-            return '-30px 0px';
+            return "-30px 0px";
         case mineState.flagged:
-            return '-60px 0px';
+            return "-60px 0px";
         case mineState.incorrectlyFlagged:
-            return '0px -30px';
+            return "0px -30px";
     }
 }
