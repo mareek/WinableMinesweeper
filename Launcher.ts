@@ -92,7 +92,9 @@ function isFieldWinableFromPosition(row: number, col: number): boolean {
 }
 
 function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
-    if (!_field) {
+    if (_field && _field.gameState !== gameState.inProgress) {
+        return false;
+    } else if (!_field) {
         do {
             createField(false)
         } while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure)
@@ -110,7 +112,7 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
 }
 
 function doubleClickCell(row: number, col: number) {
-    if (_field) {
+    if (_field && _field.gameState === gameState.inProgress) {
         _field.uncoverNeighbours(row, col);
         showMineField();
     }

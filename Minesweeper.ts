@@ -135,7 +135,7 @@ class mineField {
 
     public toggleFlagOnCell(row: number, col: number) {
         var cell = this.grid[row][col];
-        cell.hasFlag = !cell.hasFlag;
+        cell.hasFlag = !cell.hasFlag && !cell.isUncovered;
     }
 
     public forceFlagOnCell(row: number, col: number) {
