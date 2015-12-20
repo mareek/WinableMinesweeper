@@ -3,6 +3,8 @@
 /// <reference path="Minesweeper.ts" />
 /// <reference path="Solver.ts" />
 
+var _flagMode = false;
+
 var _field: mineField;
 var _solver: minesweeperSolver;
 
@@ -15,6 +17,7 @@ $(() => {
     $('#mediumButton').click(() => initMineField(16, 16, 40, true));
     $('#hardButton').click(() => initMineField(16, 30, 99, true));
     $('#autoplayButton').click(() => autoplay());
+    $('#flagButton').click(() => toggleFlagMode());
 });
 
 function initMineField(rows: number, cols: number, mineCount: number, winable?: boolean) {
@@ -62,6 +65,11 @@ function autoplay() {
     }
 }
 
+function toggleFlagMode() {
+    _flagMode = !_flagMode;
+    showMineField();
+}
+
 function createField(withSafeStart: boolean) {
     var isWinable = false
     do {
@@ -88,10 +96,10 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
         do {
             createField(false)
         } while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure)
+    } else if (_flagMode || event.which === 3) {
+        _field.toggleFlagOnCell(row, col);
     } else if (event.which === 1) {
         _field.uncoverCell(row, col);
-    } else if (event.which === 3) {
-        _field.toggleFlagOnCell(row, col);
     } else if (event.which === 2) {
         _field.uncoverNeighbours(row, col);
     }
@@ -127,7 +135,7 @@ function showCell(row: number, col: number, backgroundPosition: string) {
 function getCellContent(state: mineState, neighbourMineCount: number): string {
     switch (state) {
         case mineState.covered:
-            return '-90px 0px';
+            return _flagMode ? '-30px -60px' : '-90px 0px';
         case mineState.uncovered:
             switch (neighbourMineCount) {
                 case 0:
@@ -145,11 +153,11 @@ function getCellContent(state: mineState, neighbourMineCount: number): string {
                 case 6:
                     return '-30px -30px';
                 case 7:
-                    return '-115px -115px';
+                    return '0px -90px';
                 case 8:
-                    return '-115px -115px';
+                    return '-60px -60px';
                 default:
-                    return '-90px 0px';
+                    return '-90px -30px';
             }
         case mineState.mine:
             return '0px 0px';
