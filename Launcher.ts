@@ -70,8 +70,10 @@ function toggleFlagMode() {
 }
 
 function createField(withSafeStart: boolean) {
+    let attemptCount = 0;
     let isWinable = false;
     do {
+        attemptCount++;
         _field = new MineField(_rows, _cols, _mineCount);
         _solver = new MinesweeperSolver(_field);
         if (withSafeStart) {
@@ -80,6 +82,8 @@ function createField(withSafeStart: boolean) {
             _field.uncoverCell(startCell.row, startCell.col);
         }
     } while (withSafeStart && !isWinable);
+
+    $("#debugLabel").text("Attemps : " + attemptCount.toString());
 }
 
 function isFieldWinableFromPosition(row: number, col: number): boolean {
