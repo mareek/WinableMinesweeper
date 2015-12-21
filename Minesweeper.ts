@@ -33,7 +33,7 @@ class MineCell {
     }
 }
 
-class ReadonlyMineCell {
+class VisibleCell {
     private _row: number;
     get row(): number { return this._row; }
 
@@ -68,7 +68,7 @@ class ReadonlyMineCell {
         }
     }
 
-    isAdjacent(other: ReadonlyMineCell): boolean {
+    isAdjacent(other: VisibleCell): boolean {
         return other.col >= (this.col - 1)
             && other.col <= (this.col + 1)
             && other.row >= (this.row - 1)
@@ -120,17 +120,21 @@ class MineField {
         return _.filter(this.getAllCells(), c => cell.isAdjacent(c));
     }
 
-    public getSafeStart(): ReadonlyMineCell {
+    public getSafeStart(): VisibleCell {
         return _.chain(this.getAllCells())
             .filter(c => !c.hasMine && c.neighbourMineCount === 0)
-            .map(c => new ReadonlyMineCell(c, this._gameState))
+            .map(c => new VisibleCell(c, this._gameState))
             .shuffle()
             .first()
             .value();
     }
 
-    public getMineField(): ReadonlyMineCell[] {
-        return _.map(this.getAllCells(), c => new ReadonlyMineCell(c, this._gameState));
+    public getVisibleField(): VisibleCell[] {
+        return _.map(this.getAllCells(), c => new VisibleCell(c, this._gameState));
+    }
+
+    public getVisibleCell(row: number, col: number) {
+        return new VisibleCell(this.grid[row][col], this._gameState);
     }
 
     public toggleFlagOnCell(row: number, col: number) {
@@ -143,10 +147,10 @@ class MineField {
         cell.hasFlag = true;
     }
 
-    public uncoverCell(row: number, col: number): ReadonlyMineCell {
+    public uncoverCell(row: number, col: number): VisibleCell {
         const cell = this.grid[row][col];
         if (cell.hasFlag || cell.isUncovered) {
-            return new ReadonlyMineCell(cell, this._gameState);
+            return new VisibleCell(cell, this._gameState);
         }
 
         cell.isUncovered = true;
@@ -162,7 +166,7 @@ class MineField {
             }
         }
 
-        return new ReadonlyMineCell(cell, this._gameState);
+        return new VisibleCell(cell, this._gameState);
     }
 
     public uncoverNeighbours(row: number, col: number) {

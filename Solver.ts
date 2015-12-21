@@ -9,7 +9,7 @@ class MinesweeperSolver {
     }
 
     public playNextStep(): boolean {
-        const allCells = _.values(_.shuffle(this.minefield.getMineField()));
+        const allCells = _.values(_.shuffle(this.minefield.getVisibleField()));
         const uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered);
         return _.some(uncoveredCells, cell => this.playEsayMoves(cell, allCells, true))
             || this.playHardMoves(uncoveredCells, allCells, true);
@@ -18,14 +18,14 @@ class MinesweeperSolver {
     public uncoverGrid() {
         let hasMoved = false;
         do {
-            var allCells = this.minefield.getMineField();
+            var allCells = this.minefield.getVisibleField();
             const uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered);
             hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEsayMoves(cell, allCells, false)))
                 || this.playHardMoves(uncoveredCells, allCells, false);
         } while (hasMoved && this.minefield.gameState === gameState.inProgress);
     }
 
-    private playEsayMoves(cell: ReadonlyMineCell, allCells: ReadonlyMineCell[], returnOnFirstAction: boolean): boolean {
+    private playEsayMoves(cell: VisibleCell, allCells: VisibleCell[], returnOnFirstAction: boolean): boolean {
         let result = false;
         let neighbours = this.getAdjacentCells(cell, allCells);
         let flaggedNeighbours = _.filter(neighbours, c => c.state === mineState.flagged);
@@ -48,7 +48,7 @@ class MinesweeperSolver {
         return result;
     }
 
-    private playHardMoves(uncoveredCells: ReadonlyMineCell[], allCells: ReadonlyMineCell[], returnOnFirstAction: boolean): boolean {
+    private playHardMoves(uncoveredCells: VisibleCell[], allCells: VisibleCell[], returnOnFirstAction: boolean): boolean {
         let minedZonesById: { [id: string]: MinedZone; } = {};
         _.each(uncoveredCells, cell => {
             const neighbours = this.getAdjacentCells(cell, allCells);
@@ -94,7 +94,7 @@ class MinesweeperSolver {
         return false;
     }
 
-    private getAdjacentCells(cell: ReadonlyMineCell, allcells: ReadonlyMineCell[]): ReadonlyMineCell[] {
+    private getAdjacentCells(cell: VisibleCell, allcells: VisibleCell[]): VisibleCell[] {
         return _.filter(allcells, c => cell.isAdjacent(c));
     }
 }
@@ -103,7 +103,7 @@ class MinedZone {
     private _id: string;
     get id(): string { return this._id; }
 
-    constructor(public mineCount: number, public cells: ReadonlyMineCell[]) {
+    constructor(public mineCount: number, public cells: VisibleCell[]) {
         let ids = _.map(cells, c => c.id);
         ids.sort();
         this._id = ids.join("¤");

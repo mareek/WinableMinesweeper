@@ -49,7 +49,6 @@ function createCell(row: number, col: number): JQuery {
     return $("<td>", {
         "id": "cell-" + row + "-" + col,
         mousedown: e => clickCell(row, col, e),
-        dblclick: e => doubleClickCell(row, col),
         contextmenu: e => false
     });
 }
@@ -98,6 +97,8 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
         do {
             createField(false);
         } while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure);
+    } else if (_field.getVisibleCell(row, col).state === mineState.uncovered) {
+        _field.uncoverNeighbours(row, col);
     } else if (_flagMode || event.which === 3) {
         _field.toggleFlagOnCell(row, col);
     } else if (event.which === 1) {
@@ -111,13 +112,6 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
     return false;
 }
 
-function doubleClickCell(row: number, col: number) {
-    if (_field && _field.gameState === gameState.inProgress) {
-        _field.uncoverNeighbours(row, col);
-        showMineField();
-    }
-}
-
 function showMineField(rows?: number, cols?: number) {
     if (!_field) {
         for (let row = 0; row < rows; row++) {
@@ -126,7 +120,7 @@ function showMineField(rows?: number, cols?: number) {
             }
         }
     } else {
-        _.each(_field.getMineField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
+        _.each(_field.getVisibleField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
     }
 }
 
