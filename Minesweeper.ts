@@ -24,13 +24,6 @@ class MineCell {
     constructor(public row: number, public col: number) {
         this.neighbourMineCount = 0;
     }
-
-    isAdjacent(other: MineCell): boolean {
-        return other.col >= (this.col - 1)
-            && other.col <= (this.col + 1)
-            && other.row >= (this.row - 1)
-            && other.row <= (this.row + 1);
-    }
 }
 
 class VisibleCell {
@@ -66,13 +59,6 @@ class VisibleCell {
         } else {
             this._state = mineState.covered;
         }
-    }
-
-    isAdjacent(other: VisibleCell): boolean {
-        return other.col >= (this.col - 1)
-            && other.col <= (this.col + 1)
-            && other.row >= (this.row - 1)
-            && other.row <= (this.row + 1);
     }
 }
 
@@ -116,8 +102,24 @@ class MineField {
         return _.flatten(this.grid, true);
     }
 
+    public getVisibleNeighbours(cell: VisibleCell): VisibleCell[] {
+        return _.map(this.getAdjacentCells(this.grid[cell.row][cell.col]), c => new VisibleCell(c, this._gameState));
+    }
+
     private getAdjacentCells(cell: MineCell): MineCell[] {
-        return _.filter(this.getAllCells(), c => cell.isAdjacent(c));
+        const minRow = Math.max(0, cell.row - 1);
+        const maxRow = Math.min(this.rows - 1, cell.row + 1);
+        const minCol = Math.max(0, cell.col - 1);
+        const maxCol = Math.min(this.cols - 1, cell.col + 1);
+        let result: MineCell[] = [];
+
+        for (let row = minRow; row <= maxRow; row++) {
+            for (let col = minCol; col <= maxCol; col++) {
+                result.push(this.grid[row][col]);
+            }
+        }
+
+        return result;
     }
 
     public getSafeStart(): VisibleCell {

@@ -11,25 +11,24 @@ class MinesweeperSolver {
     public playNextStep(): boolean {
         const allCells = _.values(_.shuffle(this.minefield.getVisibleField()));
         const uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered);
-        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, allCells, true))
-            || this.playHardMoves(uncoveredCells, allCells, true);
+        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, true))
+            || this.playHardMoves(uncoveredCells, true);
     }
 
     public uncoverGrid() {
         let hasMoved = false;
         do {
-            var allCells = this.minefield.getVisibleField();
-            const uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered);
-            hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEsayMoves(cell, allCells, false)))
-                || this.playHardMoves(uncoveredCells, allCells, false);
+            const uncoveredCells = _.filter(this.minefield.getVisibleField(), c => c.state === mineState.uncovered);
+            hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEsayMoves(cell, false)))
+                || this.playHardMoves(uncoveredCells, false);
         } while (hasMoved && this.minefield.gameState === gameState.inProgress);
     }
 
-    private playEsayMoves(cell: VisibleCell, allCells: VisibleCell[], returnOnFirstAction: boolean): boolean {
+    private playEsayMoves(cell: VisibleCell, returnOnFirstAction: boolean): boolean {
         let result = false;
-        let neighbours = this.getAdjacentCells(cell, allCells);
-        let flaggedNeighbours = _.filter(neighbours, c => c.state === mineState.flagged);
-        let coveredNeighbours = _.filter(neighbours, c => c.state === mineState.covered);
+        const neighbours = this.minefield.getVisibleNeighbours(cell);
+        const flaggedNeighbours = _.filter(neighbours, c => c.state === mineState.flagged);
+        const coveredNeighbours = _.filter(neighbours, c => c.state === mineState.covered);
 
         if (coveredNeighbours.length > 0 && cell.neighbourMineCount === (flaggedNeighbours.length + coveredNeighbours.length)) {
             for (let i = 0; i < coveredNeighbours.length && !(result && returnOnFirstAction); i++) {
@@ -48,10 +47,10 @@ class MinesweeperSolver {
         return result;
     }
 
-    private playHardMoves(uncoveredCells: VisibleCell[], allCells: VisibleCell[], returnOnFirstAction: boolean): boolean {
+    private playHardMoves(uncoveredCells: VisibleCell[], returnOnFirstAction: boolean): boolean {
         let minedZonesById: { [id: string]: MinedZone; } = {};
         _.each(uncoveredCells, cell => {
-            const neighbours = this.getAdjacentCells(cell, allCells);
+            const neighbours = this.minefield.getVisibleNeighbours(cell);
             const flaggedNeighbours = _.filter(neighbours, c => c.state === mineState.flagged);
             const coveredNeighbours = _.filter(neighbours, c => c.state === mineState.covered);
             const remainingCount = cell.neighbourMineCount - flaggedNeighbours.length;
@@ -92,10 +91,6 @@ class MinesweeperSolver {
         }
 
         return false;
-    }
-
-    private getAdjacentCells(cell: VisibleCell, allcells: VisibleCell[]): VisibleCell[] {
-        return _.filter(allcells, c => cell.isAdjacent(c));
     }
 }
 
