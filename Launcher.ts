@@ -71,6 +71,7 @@ function toggleFlagMode() {
 
 function createField(withSafeStart: boolean) {
     let attemptCount = 0;
+    let start = Date.now();
     let isWinable = false;
     do {
         attemptCount++;
@@ -83,7 +84,9 @@ function createField(withSafeStart: boolean) {
         }
     } while (withSafeStart && !isWinable);
 
-    $("#debugLabel").text("Attemps : " + attemptCount.toString());
+    let duration = (Date.now() - start) / 1000;
+
+    $("#debugLabel").text("Attemps : " + attemptCount.toString() + " in " + duration.toString() + " s.");
 }
 
 function isFieldWinableFromPosition(row: number, col: number): boolean {

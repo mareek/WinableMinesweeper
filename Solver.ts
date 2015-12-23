@@ -11,9 +11,8 @@ class MinesweeperSolver {
     public playNextStep(): boolean {
         const allCells = _.values(_.shuffle(this.minefield.getVisibleField()));
         const uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered);
-        //        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, true))
-        //            || this.playHardMoves(uncoveredCells, true);
-        return this.playHardMoves(uncoveredCells, true);
+        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, true))
+            || this.playHardMoves(uncoveredCells, true);
     }
 
     public uncoverGrid() {
@@ -99,19 +98,21 @@ class MinedZone {
     private _id: string;
     get id(): string { return this._id; }
 
+    private idCells: string[];
+
     constructor(public mineCount: number, public cells: VisibleCell[]) {
-        let ids = _.map(cells, c => c.id);
-        ids.sort();
-        this._id = ids.join("|");
+        this.idCells = _.map(cells, c => c.id);
+        this.idCells.sort();
+        this._id = this.idCells.join("|");
     }
 
     public intersect(other: MinedZone): boolean {
         return other.id !== this._id
-            && _.intersection(_.map(this.cells, c => c.id), _.map(other.cells, c => c.id)).length > 0;
+            && _.intersection(this.idCells, other.idCells).length > 0;
     }
 
     public difference(other: MinedZone): VisibleCell[] {
-        let exceptIds = _.difference(_.map(this.cells, c => c.id), _.map(other.cells, c => c.id));
+        let exceptIds = _.difference(this.idCells, other.idCells);
         return _.filter(this.cells, c => _.contains(exceptIds, c.id));
     }
 }
