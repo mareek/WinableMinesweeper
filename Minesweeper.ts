@@ -15,18 +15,7 @@ enum mineState {
     mineDetonated
 }
 
-class MineCell {
-    hasMine: boolean;
-    neighbourMineCount: number;
-    hasFlag: boolean;
-    isUncovered: boolean;
-
-    constructor(public row: number, public col: number) {
-        this.neighbourMineCount = 0;
-    }
-}
-
-class VisibleCell {
+class Cell {
     private _row: number;
     get row(): number { return this._row; }
 
@@ -35,6 +24,26 @@ class VisibleCell {
 
     get id(): string { return this._row + "," + this._col; }
 
+    constructor(row: number, col: number) {
+        this._row = row;
+        this._col = col;
+
+    }
+}
+
+class MineCell extends Cell {
+    hasMine: boolean;
+    neighbourMineCount: number;
+    hasFlag: boolean;
+    isUncovered: boolean;
+
+    constructor(row: number, col: number) {
+        super(row, col);
+        this.neighbourMineCount = 0;
+    }
+}
+
+class VisibleCell extends Cell {
     private _neighbourMineCount: number;
     get neighbourMineCount(): number { return this._neighbourMineCount; }
 
@@ -42,8 +51,7 @@ class VisibleCell {
     get state(): mineState { return this._state; }
 
     constructor(cell: MineCell, currentGameState: gameState) {
-        this._row = cell.row;
-        this._col = cell.col;
+        super(cell.row, cell.col);
         this._neighbourMineCount = cell.neighbourMineCount;
 
         if (cell.isUncovered && !cell.hasMine) {
@@ -186,5 +194,11 @@ class MineField {
             cell.hasFlag = false;
             cell.isUncovered = false;
         });
+    }
+}
+
+class RawField {
+    constructor(public rows: number, public cols: number, public minedCells: Cell[]) {
+
     }
 }
