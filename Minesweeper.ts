@@ -102,24 +102,12 @@ class MineField {
             }
         }
 
-        this.fillGrid(mineCount);
+        let rawField = MineField.GenerateRawField(rows, cols, mineCount);
+        _.each(rawField.minedCells, c => this.grid[c.row][c.col].hasMine = true);
 
         _.chain(this.getAllCells())
             .where(c => !c.hasMine)
             .each(cell => cell.neighbourMineCount = _.filter(this.getAdjacentCells(cell), c => c.hasMine).length);
-    }
-
-    private fillGrid(mineCount: number) {
-        let actualMineCount = 0;
-        while (actualMineCount < mineCount) {
-            const row = _.random(this.rows - 1);
-            const col = _.random(this.cols - 1);
-            const cell = this.grid[row][col];
-            if (!cell.hasMine) {
-                cell.hasMine = true;
-                actualMineCount++;
-            }
-        }
     }
 
     private getAllCells(): MineCell[] {
