@@ -76,6 +76,22 @@ class MineField {
     private _gameState: gameState;
     public get gameState(): gameState { return this._gameState; }
 
+    public static GenerateRawField(rows: number, cols: number, mineCount: number): RawField {
+        let actualMineCount = 0;
+        let cellByIds: { [id: string]: Cell; } = {};
+        while (actualMineCount < mineCount) {
+            const row = _.random(rows - 1);
+            const col = _.random(cols - 1);
+            const cell = new Cell(row, col);
+            if (!cellByIds[cell.id]) {
+                cellByIds[cell.id] = cell;
+                actualMineCount++;
+            }
+        }
+
+        return new RawField(rows, cols, _.values(cellByIds));
+    }
+
     constructor(public rows: number, public cols: number, mineCount: number) {
         this._gameState = gameState.inProgress;
         this.grid = [];
