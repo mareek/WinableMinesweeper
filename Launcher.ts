@@ -75,7 +75,7 @@ function createField(withSafeStart: boolean) {
     let isWinable = false;
     do {
         attemptCount++;
-        _field = new MineField(_rows, _cols, _mineCount);
+        _field = MineField.generateField(_rows, _cols, _mineCount);
         _solver = new MinesweeperSolver(_field);
         if (withSafeStart) {
             const startCell = _field.getSafeStart();

@@ -73,10 +73,16 @@ class VisibleCell extends Cell {
 class MineField {
     private grid: MineCell[][]; // Indexed by [rows][columns]
 
+    private _rows: number;
+    get rows(): number { return this._rows; }
+
+    private _cols: number;
+    get cols(): number { return this._cols; }
+
     private _gameState: gameState;
     public get gameState(): gameState { return this._gameState; }
 
-    public static GenerateRawField(rows: number, cols: number, mineCount: number): RawField {
+    public static generateRawField(rows: number, cols: number, mineCount: number): RawField {
         let actualMineCount = 0;
         let cellByIds: { [id: string]: Cell; } = {};
         while (actualMineCount < mineCount) {
@@ -92,22 +98,33 @@ class MineField {
         return new RawField(rows, cols, _.values(cellByIds));
     }
 
-    constructor(public rows: number, public cols: number, mineCount: number) {
+    public static generateField(rows: number, cols: number, mineCount: number): MineField {
+        let rawField = MineField.generateRawField(rows, cols, mineCount);
+        return new MineField(rawField);
+    }
+
+    constructor(rawField: RawField) {
+        this._rows = rawField.rows;
+        this._cols = rawField.cols;
         this._gameState = gameState.inProgress;
         this.grid = [];
-        for (let row = 0; row < rows; row++) {
+        for (let row = 0; row < this.rows; row++) {
             this.grid[row] = [];
-            for (let col = 0; col < cols; col++) {
+            for (let col = 0; col < this.cols; col++) {
                 this.grid[row][col] = new MineCell(row, col);
             }
         }
 
-        let rawField = MineField.GenerateRawField(rows, cols, mineCount);
         _.each(rawField.minedCells, c => this.grid[c.row][c.col].hasMine = true);
 
         _.chain(this.getAllCells())
             .where(c => !c.hasMine)
             .each(cell => cell.neighbourMineCount = _.filter(this.getAdjacentCells(cell), c => c.hasMine).length);
+    }
+
+    public toRawField(): RawField {
+        const minedCells = _.filter(this.getAllCells(), c => c.hasMine);
+        return new RawField(this.rows, this.cols, minedCells);
     }
 
     private getAllCells(): MineCell[] {
