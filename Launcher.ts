@@ -14,13 +14,13 @@ let _mineCount = 0;
 
 $(() => {
     $("#easyButton").click(() => initMineField(9, 9, 10));
-    $("#mediumButton").click(() => initMineField(16, 16, 40, true));
-    $("#hardButton").click(() => initMineField(16, 30, 99, true));
+    $("#mediumButton").click(() => initMineField(16, 16, 40));
+    $("#hardButton").click(() => initMineField(16, 30, 99));
     $("#autoplayButton").click(() => autoplay());
     $("#flagButton").click(() => toggleFlagMode());
 });
 
-function initMineField(rows: number, cols: number, mineCount: number, winable?: boolean) {
+function initMineField(rows: number, cols: number, mineCount: number) {
     _field = null;
     _solver = null;
     _cols = cols;
@@ -38,10 +38,6 @@ function initMineField(rows: number, cols: number, mineCount: number, winable?: 
         mineFieldTable.append(tr);
     }
 
-    if (winable) {
-        createField(true);
-    }
-
     showMineField(rows, cols);
 }
 
@@ -55,7 +51,7 @@ function createCell(row: number, col: number): JQuery {
 
 function autoplay() {
     if (!_field && _rows !== 0) {
-        createField(true);
+        createField(Math.floor(_rows / 2), Math.floor(_cols / 2));
     }
 
     if (_solver && _field.gameState === gameState.inProgress && _solver.playNextStep()) {
@@ -69,23 +65,21 @@ function toggleFlagMode() {
     showMineField();
 }
 
-function createField(withSafeStart: boolean) {
+function createField(row: number, col: number) {
     let attemptCount = 0;
     let start = Date.now();
     let isWinable = false;
+    let startCell = new Cell(row, col);
     do {
         attemptCount++;
-        _field = MineField.generateField(_rows, _cols, _mineCount);
+        _field = MineField.generateFieldWithSafeZone(_rows, _cols, _mineCount, startCell);
         _solver = new MinesweeperSolver(_field);
-        if (withSafeStart) {
-            const startCell = _field.getSafeStart();
-            isWinable = isFieldWinableFromPosition(startCell.row, startCell.col);
-            _field.uncoverCell(startCell.row, startCell.col);
-        }
-    } while (withSafeStart && !isWinable);
+        isWinable = isFieldWinableFromPosition(startCell.row, startCell.col);
+    } while (!isWinable);
+
+    _field.uncoverCell(startCell.row, startCell.col);
 
     let duration = (Date.now() - start) / 1000;
-
     $("#debugLabel").text("Attemps : " + attemptCount.toString() + " in " + duration.toString() + " s.");
 }
 
@@ -101,9 +95,7 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
     if (_field && _field.gameState !== gameState.inProgress) {
         return false;
     } else if (!_field) {
-        do {
-            createField(false);
-        } while (_field.uncoverCell(row, col).neighbourMineCount !== 0 || _field.gameState === gameState.failure);
+        createField(row, col);
     } else if (_field.getVisibleCell(row, col).state === mineState.uncovered) {
         _field.uncoverNeighbours(row, col);
     } else if (_flagMode || event.which === 3) {
