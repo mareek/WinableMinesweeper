@@ -82,7 +82,10 @@ class MineField {
     private _gameState: gameState;
     public get gameState(): gameState { return this._gameState; }
 
-    private static generateRawField(rows: number, cols: number, mineCount: number, forbidenCellsById: { [id: string]: Cell } = {}): RawField {
+    public static generateFieldWithSafeZone(rows: number, cols: number, mineCount: number, safeCell: Cell): MineField {
+        let forbidenCellsById: { [id: string]: Cell } = {};
+        _.each(MineField.getNeighbours(safeCell, rows, cols), c => forbidenCellsById[c.id] = c);
+
         let actualMineCount = 0;
         let minedCellsById: { [id: string]: Cell; } = {};
         while (actualMineCount < mineCount) {
@@ -95,14 +98,7 @@ class MineField {
             }
         }
 
-        return new RawField(rows, cols, _.values(minedCellsById));
-    }
-
-    public static generateFieldWithSafeZone(rows: number, cols: number, mineCount: number, safeCell: Cell): MineField {
-        let forbidenCellsById: { [id: string]: Cell } = {};
-        _.each(MineField.getNeighbours(safeCell, rows, cols), c => forbidenCellsById[c.id] = c);
-        const rawField = MineField.generateRawField(rows, cols, mineCount, forbidenCellsById);
-        return new MineField(rawField);
+        return new MineField(new RawField(rows, cols, _.values(minedCellsById)));
     }
 
     constructor(rawField: RawField) {
@@ -157,15 +153,6 @@ class MineField {
         return result;
     }
 
-    public getSafeStart(): Cell {
-        return _.chain(this.getAllCells())
-            .filter(c => !c.hasMine && c.neighbourMineCount === 0)
-            .map(c => new VisibleCell(c, this._gameState))
-            .shuffle()
-            .first()
-            .value();
-    }
-
     public getVisibleField(): VisibleCell[] {
         return _.map(this.getAllCells(), c => new VisibleCell(c, this._gameState));
     }
@@ -184,10 +171,10 @@ class MineField {
         cell.hasFlag = true;
     }
 
-    public uncoverCell(row: number, col: number): VisibleCell {
+    public uncoverCell(row: number, col: number) {
         const cell = this.grid[row][col];
         if (cell.hasFlag || cell.isUncovered) {
-            return new VisibleCell(cell, this._gameState);
+            return;
         }
 
         cell.isUncovered = true;
@@ -202,15 +189,13 @@ class MineField {
                 this._gameState = gameState.victory;
             }
         }
-
-        return new VisibleCell(cell, this._gameState);
     }
 
     public uncoverNeighbours(row: number, col: number) {
         const cell = this.grid[row][col];
-        const adjacentcells = this.getNeighbours(cell);
-        if (!cell.hasFlag && _.filter(adjacentcells, c => c.hasFlag).length === cell.neighbourMineCount) {
-            _.each(adjacentcells, c => this.uncoverCell(c.row, c.col));
+        const neighbours = this.getNeighbours(cell);
+        if (!cell.hasFlag && _.filter(neighbours, c => c.hasFlag).length === cell.neighbourMineCount) {
+            _.each(neighbours, c => this.uncoverCell(c.row, c.col));
         }
     }
 
@@ -225,7 +210,5 @@ class MineField {
 }
 
 class RawField {
-    constructor(public rows: number, public cols: number, public minedCells: Cell[]) {
-
-    }
+    constructor(public rows: number, public cols: number, public minedCells: Cell[]) { }
 }
