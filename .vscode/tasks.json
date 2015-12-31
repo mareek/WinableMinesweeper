@@ -15,8 +15,10 @@
 	"showOutput": "silent",
 	"problemMatcher": "$tsc",
 	"args": [
-		"Launcher.ts",
-		"Minesweeper.ts"
+		"Minesweeper.ts",
+		"Solver.ts",
+		"MinesweeperTest.ts",
+		"Launcher.ts"
 	]
 }
 
