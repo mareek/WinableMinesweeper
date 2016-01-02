@@ -11,7 +11,7 @@ class MinesweeperSolver {
     public playNextStep(): boolean {
         const allCells = _.values(_.shuffle(this.minefield.getVisibleField()));
         const uncoveredCells = _.filter(allCells, c => c.state === mineState.uncovered);
-        return _.some(uncoveredCells, cell => this.playEsayMoves(cell, true))
+        return _.some(uncoveredCells, cell => this.playEasyMoves(cell, true))
             || this.playHardMoves(uncoveredCells, true);
     }
 
@@ -19,12 +19,12 @@ class MinesweeperSolver {
         let hasMoved = false;
         do {
             const uncoveredCells = _.filter(this.minefield.getVisibleField(), c => c.state === mineState.uncovered);
-            hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEsayMoves(cell, false)))
+            hasMoved = _.some(_.filter(uncoveredCells, cell => this.playEasyMoves(cell, false)))
                 || this.playHardMoves(uncoveredCells, false);
         } while (hasMoved && this.minefield.gameState === gameState.inProgress);
     }
 
-    private playEsayMoves(cell: VisibleCell, returnOnFirstAction: boolean): boolean {
+    private playEasyMoves(cell: VisibleCell, returnOnFirstAction: boolean): boolean {
         let result = false;
         const neighbours = this.minefield.getVisibleNeighbours(cell);
         const flaggedNeighbours = _.filter(neighbours, c => c.state === mineState.flagged);
