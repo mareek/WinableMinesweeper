@@ -15,6 +15,18 @@ QUnit.test("First move is always on an blanck cell", assert => {
     assert.strictEqual(uncoveredCell.neighbourMineCount, 0);
 });
 
+QUnit.test("Uncovering mine cause defeat", assert => {
+    let grid = new RawField(2, 2, [new Cell(1, 1)]);
+    let minefield = new MineField(grid);
+    minefield.uncoverCell(0, 0);
+    minefield.toggleFlagOnCell(0, 1);
+    minefield.uncoverNeighbours(0, 0);
+
+    assert.strictEqual(minefield.gameState, gameState.failure);
+    assert.strictEqual(minefield.getVisibleCell(0, 1).state, mineState.incorrectlyFlagged);
+    assert.strictEqual(minefield.getVisibleCell(1, 1).state, mineState.mineDetonated);
+});
+
 QUnit.test("Solver can win easy grid", assert => {
     let easyGrid = new RawField(5, 5, [new Cell(2, 2), new Cell(2, 3)]);
     testGrid(assert, easyGrid, 0, 0, gameState.victory);
@@ -38,6 +50,15 @@ function testGrid(assert: QUnitAssert, grid: RawField, rowStart: number, colStar
 
     let solver = new MinesweeperSolver(minefield);
     solver.uncoverGrid();
+
+    assert.strictEqual(minefield.gameState, finalState);
+
+    minefield.reset();
+    minefield.uncoverCell(rowStart, colStart);
+
+    for (let i = 0; i < 100 && minefield.gameState === gameState.inProgress; i++) {
+        solver.playNextStep();
+    }
 
     assert.strictEqual(minefield.gameState, finalState);
 }
