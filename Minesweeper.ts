@@ -120,11 +120,6 @@ class MineField {
             .each(cell => cell.neighbourMineCount = _.filter(this.getNeighbours(cell), c => c.hasMine).length);
     }
 
-    public toRawField(): RawField {
-        const minedCells = _.filter(this.getAllCells(), c => c.hasMine);
-        return new RawField(this.rows, this.cols, minedCells);
-    }
-
     private getAllCells(): MineCell[] {
         return _.flatten(this.grid, true);
     }
