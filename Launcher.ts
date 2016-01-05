@@ -120,6 +120,12 @@ function showMineField(rows?: number, cols?: number) {
         }
     } else {
         _.each(_field.getVisibleField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
+
+        if (_field.gameState !== gameState.inProgress) {
+            let outcome = (_field.gameState === gameState.victory) ? "Victory :-)" : "Failure :-(";
+            let duration = Math.floor((_field.end.valueOf() - _field.start.valueOf()) / 1000);
+            $("#debugLabel").text(outcome + " in " + duration.toString() + " s.");
+        }
     }
 }
 

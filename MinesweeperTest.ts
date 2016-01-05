@@ -6,6 +6,10 @@
 QUnit.test("First move is always on an blanck cell", assert => {
     let firstMove = new Cell(5, 5);
     let minefield = MineField.generateFieldWithSafeZone(10, 10, 30, firstMove);
+
+    assert.ok((Date.now() - minefield.start.valueOf()) < 10);
+    assert.strictEqual(minefield.end.valueOf(), new Date(2000, 0, 1).valueOf());
+
     minefield.uncoverCell(firstMove.row, firstMove.col);
 
     assert.strictEqual(minefield.gameState, gameState.inProgress);
@@ -53,8 +57,17 @@ function testGrid(assert: QUnitAssert, grid: RawField, rowStart: number, colStar
 
     assert.strictEqual(minefield.gameState, finalState);
 
+    if (minefield.gameState !== gameState.inProgress) {
+        assert.ok((Date.now() - minefield.end.valueOf()) < 10);
+    }
+
     minefield.reset();
+
+    assert.ok((Date.now() - minefield.start.valueOf()) < 10);
+
     minefield.uncoverCell(rowStart, colStart);
+
+    assert.strictEqual(minefield.end.valueOf(), new Date(2000, 0, 1).valueOf());
 
     for (let i = 0; i < 100 && minefield.gameState === gameState.inProgress; i++) {
         solver.playNextStep();

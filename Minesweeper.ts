@@ -82,6 +82,12 @@ class MineField {
     private _gameState: gameState;
     public get gameState(): gameState { return this._gameState; }
 
+    private _start: Date;
+    public get start(): Date { return this._start; }
+
+    private _end: Date;
+    public get end(): Date { return this._end; }
+
     public static generateFieldWithSafeZone(rows: number, cols: number, mineCount: number, safeCell: Cell): MineField {
         let forbidenCellsById: { [id: string]: Cell } = {};
         _.each(MineField.getNeighbours(safeCell, rows, cols), c => forbidenCellsById[c.id] = c);
@@ -105,6 +111,9 @@ class MineField {
         this._rows = rawField.rows;
         this._cols = rawField.cols;
         this._gameState = gameState.inProgress;
+        this._start = new Date();
+        this._end = new Date(2000, 0, 1);
+
         this.grid = [];
         for (let row = 0; row < this.rows; row++) {
             this.grid[row] = [];
@@ -175,6 +184,7 @@ class MineField {
         cell.isUncovered = true;
         if (cell.hasMine) {
             this._gameState = gameState.failure;
+            this._end = new Date();
         } else {
             if (cell.neighbourMineCount === 0) {
                 _.each(this.getNeighbours(cell), c => this.uncoverCell(c.row, c.col));
@@ -182,6 +192,7 @@ class MineField {
 
             if (_.every(this.getAllCells(), c => c.hasMine || c.isUncovered)) {
                 this._gameState = gameState.victory;
+                this._end = new Date();
             }
         }
     }
@@ -196,6 +207,8 @@ class MineField {
 
     public reset() {
         this._gameState = gameState.inProgress;
+        this._start = new Date();
+        this._end = new Date(2000, 0, 1);
 
         _.each(this.getAllCells(), cell => {
             cell.hasFlag = false;
