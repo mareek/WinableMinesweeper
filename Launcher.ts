@@ -38,7 +38,7 @@ function initMineField(rows: number, cols: number, mineCount: number) {
         mineFieldTable.append(tr);
     }
 
-    showMineField(rows, cols);
+    showMineField();
 }
 
 function createCell(row: number, col: number): JQuery {
@@ -111,15 +111,15 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
     return false;
 }
 
-function showMineField(rows?: number, cols?: number) {
+function showMineField() {
     if (!_field) {
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                showCell(row, col, getCellContent(mineState.covered, 0));
+        for (let row = 0; row < _rows; row++) {
+            for (let col = 0; col < _cols; col++) {
+                showCell(row, col, getCellClass(mineState.covered, 0));
             }
         }
     } else {
-        _.each(_field.getVisibleField(), cell => showCell(cell.row, cell.col, getCellContent(cell.state, cell.neighbourMineCount)));
+        _.each(_field.getVisibleField(), cell => showCell(cell.row, cell.col, getCellClass(cell.state, cell.neighbourMineCount)));
 
         if (_field.gameState !== gameState.inProgress) {
             let outcome = (_field.gameState === gameState.victory) ? "Victory :-)" : "Failure :-(";
@@ -129,44 +129,23 @@ function showMineField(rows?: number, cols?: number) {
     }
 }
 
-function showCell(row: number, col: number, backgroundPosition: string) {
-    $("#cell-" + row + "-" + col).css("background-position", backgroundPosition);
+function showCell(row: number, col: number, cssClass: string) {
+    $("#cell-" + row + "-" + col).removeClass().addClass(cssClass);
 }
 
-function getCellContent(state: mineState, neighbourMineCount: number): string {
+function getCellClass(state: mineState, neighbourMineCount: number): string {
     switch (state) {
         case mineState.covered:
-            return _flagMode ? "-30px -60px" : "-90px 0px";
-        case mineState.uncovered:
-            switch (neighbourMineCount) {
-                case 0:
-                    return "-90px -30px";
-                case 1:
-                    return "-90px -90px";
-                case 2:
-                    return "-90px -60px";
-                case 3:
-                    return "-60px -90px";
-                case 4:
-                    return "-60px -30px";
-                case 5:
-                    return "0px -60px";
-                case 6:
-                    return "-30px -30px";
-                case 7:
-                    return "0px -90px";
-                case 8:
-                    return "-60px -60px";
-                default:
-                    return "-90px -30px";
-            }
-        case mineState.mine:
-            return "0px 0px";
-        case mineState.mineDetonated:
-            return "-30px 0px";
+            return "covered" + (_flagMode ? "-flaggable" : "");
         case mineState.flagged:
-            return "-60px 0px";
+            return "flagged";
         case mineState.incorrectlyFlagged:
-            return "0px -30px";
+            return "incorrectly-flagged";
+        case mineState.mine:
+            return "mine";
+        case mineState.mineDetonated:
+            return "mine-detonated";
+        case mineState.uncovered:
+            return "uncovered-" + neighbourMineCount.toString();
     }
 }
