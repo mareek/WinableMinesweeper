@@ -10,28 +10,28 @@
         
         td {
             padding: 0;
-            height: 30px;
-            width: 30px;
+            height: 40px;
+            width: 40px;
             text-align: center;
             vertical-align: middle;
             background-image: url(minecells.png);
-            background-size: 120px;
+            background-size: 160px;
         }
         
         .covered {
-            background-position: -90px 0px;
+            background-position: -120px 0px;
         }
         
         .covered-flaggable {
-            background-position: -30px -60px;
+            background-position: -40px -80px;
         }
         
         .flagged {
-            background-position: -60px 0px;
+            background-position: -80px 0px;
         }
         
         .incorrectly-flagged {
-            background-position: 0px -30px;
+            background-position: 0px -40px;
         }
         
         .mine {
@@ -39,70 +39,78 @@
         }
         
         .mine-detonated {
-            background-position: -30px 0px;
+            background-position: -40px 0px;
         }
         
         .uncovered-0 {
-            background-position: -90px -30px;
+            background-position: -120px -40px;
         }
         
         .uncovered-1 {
-            background-position: -90px -90px;
+            background-position: -120px -120px;
         }
         
         .uncovered-2 {
-            background-position: -90px -60px;
+            background-position: -120px -80px;
         }
         
         .uncovered-3 {
-            background-position: -60px -90px;
+            background-position: -80px -120px;
         }
         
         .uncovered-4 {
-            background-position: -60px -30px;
+            background-position: -80px -40px;
         }
         
         .uncovered-5 {
-            background-position: 0px -60px;
+            background-position: 0px -80px;
         }
         
         .uncovered-6 {
-            background-position: -30px -30px;
+            background-position: -40px -40px;
         }
         
         .uncovered-7 {
-            background-position: 0px -90px;
+            background-position: 0px -120px;
         }
         
         .uncovered-8 {
-            background-position: -60px -60px;
+            background-position: -80px -80px;
+        }
+        
+        .centered {
+            text-align: center;
+            
         }
     </style>
 </head>
 
 <body>
-    <h1>Minesweeper</h1>
+    <h1 class="centered">Minesweeper</h1>
 
-    <button id="easyButton">Easy</button>
-    <button id="mediumButton">Medium</button>
-    <button id="hardButton">Hard</button>
-    <br/>
-    <span id="debugLabel"></span>
-    <br/>
+    <div class="centered">
+        <button id="easyButton">Easy</button>
+        <button id="mediumButton">Medium</button>
+        <button id="hardButton">Hard</button>
+        <br/>
+        <span id="debugLabel"></span>
+        <br/>
 
-    <button id="autoplayButton">Auto play</button>
-    <button id="flagButton">Flag</button>
-    <br/>
+        <button id="autoplayButton">Auto play</button>
+        <button id="flagButton">Flag</button>
+        <br/>
 
-    <br/>
+        <br/>
+    </div>
+        <table id="mineFieldTable" style="margin: 0px auto"></table>
 
-    <table id="mineFieldTable"></table>
 
     <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
     <script src="Minesweeper.js"></script>
     <script src="Solver.js"></script>
     <script src="Launcher.js"></script>
+
 </body>
 
 </html>
