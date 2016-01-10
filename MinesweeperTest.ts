@@ -7,7 +7,7 @@ QUnit.test("First move is always on an blanck cell", assert => {
     let firstMove = new Cell(5, 5);
     let minefield = MineField.generateFieldWithSafeZone(10, 10, 30, firstMove);
 
-    assert.ok((Date.now() - minefield.start.valueOf()) < 10);
+    assertDateIsAlmostNow(assert, minefield.start);
     assert.strictEqual(minefield.end.valueOf(), new Date(2000, 0, 1).valueOf());
 
     minefield.uncoverCell(firstMove.row, firstMove.col);
@@ -46,6 +46,10 @@ QUnit.test("Solver can't win impossible grid", assert => {
     testGrid(assert, impossibleGrid, 0, 0, gameState.inProgress);
 });
 
+function assertDateIsAlmostNow(assert: QUnitAssert, date: Date) {
+    assert.ok((Date.now() - date.valueOf()) < 50);
+}
+
 function testGrid(assert: QUnitAssert, grid: RawField, rowStart: number, colStart: number, finalState: gameState) {
     let minefield = new MineField(grid);
     minefield.uncoverCell(rowStart, colStart);
@@ -58,12 +62,12 @@ function testGrid(assert: QUnitAssert, grid: RawField, rowStart: number, colStar
     assert.strictEqual(minefield.gameState, finalState);
 
     if (minefield.gameState !== gameState.inProgress) {
-        assert.ok((Date.now() - minefield.end.valueOf()) < 10);
+        assert.ok((Date.now() - minefield.end.valueOf()) < 50);
     }
 
     minefield.reset();
 
-    assert.ok((Date.now() - minefield.start.valueOf()) < 10);
+    assertDateIsAlmostNow(assert, minefield.start);
 
     minefield.uncoverCell(rowStart, colStart);
 
