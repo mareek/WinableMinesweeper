@@ -52,3 +52,6 @@ Launcher.js
 Solver.js
 Minesweeper.js
 MinesweeperTest.js
+
+# Store Key
+*.pfx
