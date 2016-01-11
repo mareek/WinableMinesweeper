@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Machine>SURFACE-MATT</Machine>
+    <WindowsUser>Matthieu</WindowsUser>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetOsVersion>10.0</TargetOsVersion>
+    <TargetOsDescription>Windows 10.0</TargetOsDescription>
+    <SolutionConfiguration>Debug|AnyCPU</SolutionConfiguration>
+    <PackageArchitecture>neutral</PackageArchitecture>
+    <PackageIdentityName>f3a58e00-4dea-473d-9098-16047d5a8d92</PackageIdentityName>
+    <IntermediateOutputPath>C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\bld\Debug\</IntermediateOutputPath>
+    <RegisteredManifestChecksum>8B65D26CB4C880554039B9C9574663A6693387273154AB47B3176568DD45E70B</RegisteredManifestChecksum>
+    <RegisteredPackageMoniker>f3a58e00-4dea-473d-9098-16047d5a8d92_1.0.0.0_neutral__5ymnxf629x530</RegisteredPackageMoniker>
+    <RegisteredUserModeAppID>f3a58e00-4dea-473d-9098-16047d5a8d92_5ymnxf629x530!App</RegisteredUserModeAppID>
+    <RegisteredPackageID>f3a58e00-4dea-473d-9098-16047d5a8d92</RegisteredPackageID>
+    <RegisteredPackagePublisher>CN=Matthieu</RegisteredPackagePublisher>
+    <RegisteredVersion>1.0.0.0</RegisteredVersion>
+    <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppXManifest Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\bin\Debug\AppxManifest.xml">
+      <PackagePath>AppxManifest.xml</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2016-01-11T21:27:20.140</Modified>
+    </AppXManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\jquery.js">
+      <PackagePath>js\jquery.js</PackagePath>
+      <Modified>2015-11-30T15:24:57.896</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Launcher.js">
+      <PackagePath>js\Launcher.js</PackagePath>
+      <Modified>2016-01-11T21:18:28.951</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Minesweeper.js">
+      <PackagePath>js\Minesweeper.js</PackagePath>
+      <Modified>2016-01-11T21:18:28.888</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Solver.js">
+      <PackagePath>js\Solver.js</PackagePath>
+      <Modified>2016-01-11T21:18:28.909</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\underscore.js">
+      <PackagePath>js\underscore.js</PackagePath>
+      <Modified>2015-11-28T11:22:01.719</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\js\default.js">
+      <PackagePath>js\default.js</PackagePath>
+      <Modified>2015-09-20T15:22:50.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\WinJS\js\en-US\ui.strings.js">
+      <PackagePath>WinJS\js\en-US\ui.strings.js</PackagePath>
+      <Modified>2015-10-10T20:09:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\WinJS\js\base.js">
+      <PackagePath>WinJS\js\base.js</PackagePath>
+      <Modified>2015-10-10T20:09:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\WinJS\js\ui.js">
+      <PackagePath>WinJS\js\ui.js</PackagePath>
+      <Modified>2015-10-10T20:09:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Launcher.js">
+      <PackagePath>Launcher.js</PackagePath>
+      <Modified>2016-01-11T21:18:28.951</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Minesweeper.js">
+      <PackagePath>Minesweeper.js</PackagePath>
+      <Modified>2016-01-11T21:18:28.888</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Solver.js">
+      <PackagePath>Solver.js</PackagePath>
+      <Modified>2016-01-11T21:18:28.909</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\minecells.png">
+      <PackagePath>images\minecells.png</PackagePath>
+      <Modified>2015-12-20T10:51:16.504</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\LockScreenLogo.scale-200.png">
+      <PackagePath>images\LockScreenLogo.scale-200.png</PackagePath>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\SplashScreen.scale-200.png">
+      <PackagePath>images\SplashScreen.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\Square150x150Logo.scale-200.png">
+      <PackagePath>images\Square150x150Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\Square44x44Logo.scale-200.png">
+      <PackagePath>images\Square44x44Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <PackagePath>images\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\StoreLogo.png">
+      <PackagePath>images\StoreLogo.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\images\Wide310x150Logo.scale-200.png">
+      <PackagePath>images\Wide310x150Logo.scale-200.png</PackagePath>
+      <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
+      <Modified>2015-10-10T20:09:42.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\default.html">
+      <PackagePath>default.html</PackagePath>
+      <Modified>2016-01-11T21:17:14.547</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\css\default.css">
+      <PackagePath>css\default.css</PackagePath>
+      <Modified>2016-01-11T21:27:15.639</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\WinJS\css\ui-dark.css">
+      <PackagePath>WinJS\css\ui-dark.css</PackagePath>
+      <Modified>2015-10-10T20:09:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\WinJS\css\ui-light.css">
+      <PackagePath>WinJS\css\ui-light.css</PackagePath>
+      <Modified>2015-10-10T20:09:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\WinJS\fonts\Symbols.ttf">
+      <PackagePath>WinJS\fonts\Symbols.ttf</PackagePath>
+      <Modified>2015-10-10T20:09:40.000</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Launcher.js.map">
+      <PackagePath>Launcher.js.map</PackagePath>
+      <Modified>2016-01-11T21:14:44.765</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Minesweeper.js.map">
+      <PackagePath>Minesweeper.js.map</PackagePath>
+      <Modified>2016-01-11T21:14:44.696</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\Solver.js.map">
+      <PackagePath>Solver.js.map</PackagePath>
+      <Modified>2016-01-11T21:14:44.749</Modified>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Sources\WinableMinesweeper\App\WinableMinesweeperApp\bin\Debug\ReverseMap\resources.pri">
+      <PackagePath>resources.pri</PackagePath>
+      <Modified>2016-01-11T21:27:20.087</Modified>
+    </AppxPackagedFile>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
