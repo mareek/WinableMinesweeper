@@ -60,6 +60,27 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="..\..\jquery.js">
+      <Link>js\jquery.js</Link>
+    </Content>
+    <Content Include="..\..\Launcher.js">
+      <Link>js\Launcher.js</Link>
+    </Content>
+    <Content Include="..\..\minecells.png">
+      <Link>images\minecells.png</Link>
+    </Content>
+    <Content Include="..\..\Minesweeper.js">
+      <Link>js\Minesweeper.js</Link>
+    </Content>
+    <Content Include="..\..\Solver.js">
+      <Link>js\Solver.js</Link>
+    </Content>
+    <Content Include="..\..\underscore.js">
+      <Link>js\underscore.js</Link>
+    </Content>
+    <TypeScriptCompile Include="..\..\Launcher.ts">
+      <Link>js\Launcher.ts</Link>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="..\..\Minesweeper.ts">
       <Link>js\Minesweeper.ts</Link>
     </TypeScriptCompile>
