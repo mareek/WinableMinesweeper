@@ -12,6 +12,10 @@ td {
     background-size: 160px;
 }
 
+.debug {
+    display: none;
+}
+
 .covered {
     background-position: -120px 0px;
 }
