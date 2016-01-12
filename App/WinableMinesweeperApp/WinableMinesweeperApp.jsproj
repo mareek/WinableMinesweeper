@@ -63,6 +63,9 @@
     <Content Include="..\..\jquery.js">
       <Link>js\jquery.js</Link>
     </Content>
+    <Content Include="..\..\konami.js">
+      <Link>js\konami.js</Link>
+    </Content>
     <Content Include="..\..\Launcher.js">
       <Link>js\Launcher.js</Link>
     </Content>

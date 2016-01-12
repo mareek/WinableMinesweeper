@@ -1,5 +1,6 @@
-/// <reference path="underscore.d.ts" />
 /// <reference path="jquery.d.ts" />
+/// <reference path="underscore.d.ts" />
+/// <reference path="konami.d.ts" />
 /// <reference path="Minesweeper.ts" />
 /// <reference path="Solver.ts" />
 
@@ -19,6 +20,8 @@ $(() => {
     $("#autoplayButton").click(() => autoplay());
     $("#flagButton").click(() => toggleFlagMode());
 });
+
+let easter_egg = new Konami(autoplay);
 
 function initMineField(rows: number, cols: number, mineCount: number) {
     _field = null;
