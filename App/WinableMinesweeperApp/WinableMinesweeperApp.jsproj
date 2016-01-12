@@ -81,6 +81,9 @@
     <Content Include="..\..\underscore.js">
       <Link>js\underscore.js</Link>
     </Content>
+    <TypeScriptCompile Include="..\..\konami.d.ts">
+      <Link>js\konami.d.ts</Link>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="..\..\Launcher.ts">
       <Link>js\Launcher.ts</Link>
     </TypeScriptCompile>
