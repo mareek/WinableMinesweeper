@@ -83,7 +83,7 @@ function createField(row: number, col: number) {
     _field.uncoverCell(startCell.row, startCell.col);
 
     let duration = (Date.now() - start) / 1000;
-    $("#debugLabel").text("Attemps : " + attemptCount.toString() + " in " + duration.toString() + " s.");
+    $("#debugLabel").text("Attemps : " + attemptCount + " in " + duration + " s.");
 }
 
 function isFieldWinableFromPosition(row: number, col: number): boolean {
@@ -127,7 +127,7 @@ function showMineField() {
         if (_field.gameState !== gameState.inProgress) {
             let outcome = (_field.gameState === gameState.victory) ? "Victory :-)" : "Failure :-(";
             let duration = Math.floor((_field.end.valueOf() - _field.start.valueOf()) / 1000);
-            $("#debugLabel").text(outcome + " in " + duration.toString() + " s.");
+            $("#debugLabel").text(outcome + " in " + duration + " s.");
         }
     }
 }
@@ -149,6 +149,6 @@ function getCellClass(state: mineState, neighbourMineCount: number): string {
         case mineState.mineDetonated:
             return "mine-detonated";
         case mineState.uncovered:
-            return "uncovered-" + neighbourMineCount.toString();
+            return "uncovered-" + neighbourMineCount;
     }
 }
