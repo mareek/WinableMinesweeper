@@ -7,7 +7,6 @@
 let _flagMode = false;
 
 let _field: MineField;
-let _solver: MinesweeperSolver;
 
 let _cols = 0;
 let _rows = 0;
@@ -25,7 +24,6 @@ let easter_egg = new Konami(autoplay);
 
 function initMineField(rows: number, cols: number, mineCount: number) {
     _field = null;
-    _solver = null;
     _cols = cols;
     _rows = rows;
     _mineCount = mineCount;
@@ -54,10 +52,12 @@ function createCell(row: number, col: number): JQuery {
 
 function autoplay() {
     if (!_field && _rows !== 0) {
-        createField(Math.floor(_rows / 2), Math.floor(_cols / 2));
+        const row = Math.floor(_rows / 2);
+        const col = Math.floor(_cols / 2);
+        createField(new Cell(row, col), 1, Date.now());
     }
 
-    if (_solver && _field.gameState === gameState.inProgress && _solver.playNextStep()) {
+    if (_field.gameState === gameState.inProgress && new MinesweeperSolver(_field).playNextStep()) {
         showMineField();
         window.setTimeout(autoplay, 100);
     }
@@ -68,27 +68,22 @@ function toggleFlagMode() {
     showMineField();
 }
 
-function createField(row: number, col: number) {
-    let attemptCount = 0;
-    let start = Date.now();
-    let isWinable = false;
-    let startCell = new Cell(row, col);
-    do {
-        attemptCount++;
-        _field = MineField.generateFieldWithSafeZone(_rows, _cols, _mineCount, startCell);
-        _solver = new MinesweeperSolver(_field);
-        isWinable = isFieldWinableFromPosition(startCell.row, startCell.col);
-    } while (!isWinable);
-
-    _field.uncoverCell(startCell.row, startCell.col);
-
-    let duration = (Date.now() - start) / 1000;
-    $("#debugLabel").text("Attemps : " + attemptCount + " in " + duration + " s.");
+function createField(startCell: Cell, attemptCount: number, startTimestamp: number) {
+    $("#debugLabel").text("Building grid. attempt " + attemptCount);
+    _field = MineField.generateFieldWithSafeZone(_rows, _cols, _mineCount, startCell);
+    if (isFieldWinableFromPosition(startCell.row, startCell.col)) {
+        _field.uncoverCell(startCell.row, startCell.col);
+        let duration = (Date.now() - startTimestamp) / 1000;
+        $("#debugLabel").text("Attemps : " + attemptCount + " in " + duration + " s.");
+        showMineField();
+    } else {
+        window.setTimeout(() => createField(startCell, attemptCount + 1, startTimestamp), 0);
+    }
 }
 
 function isFieldWinableFromPosition(row: number, col: number): boolean {
     _field.uncoverCell(row, col);
-    _solver.uncoverGrid();
+    new MinesweeperSolver(_field).uncoverGrid();
     const result = _field.gameState === gameState.victory;
     _field.reset();
     return result;
@@ -98,7 +93,7 @@ function clickCell(row: number, col: number, event: JQueryMouseEventObject) {
     if (_field && _field.gameState !== gameState.inProgress) {
         return false;
     } else if (!_field) {
-        createField(row, col);
+        createField(new Cell(row, col), 1, Date.now());
     } else if (_field.getVisibleCell(row, col).state === mineState.uncovered) {
         _field.uncoverNeighbours(row, col);
     } else if (_flagMode || event.which === 3) {
