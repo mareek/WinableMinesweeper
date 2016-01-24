@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WinableMinesweeper
+﻿namespace WinableMinesweeper
 {
-    public struct MineCell
+    public class MineCell
     {
         public int Row { get; }
 
@@ -14,13 +8,43 @@ namespace WinableMinesweeper
 
         public bool HasMine { get; set; }
 
+        public int NeighbourhoodMineCount { get; set; }
+
         public bool HasFlag { get; set; }
 
+        public bool IsUncovered { get; set; }
+
         public MineCell(int row, int col)
-            :this()
         {
             Row = row;
             Col = col;
+        }
+
+        public MineState GetState()
+        {
+            if (IsUncovered && !HasMine)
+            {
+                return MineState.Uncovered;
+            }
+            else if (HasMine && IsUncovered)
+            {
+                return MineState.MineDetonated;
+            }
+            else if (HasFlag && !HasMine)
+            {
+                return MineState.IncorrectlyFlagged;
+            }
+            else if (HasFlag)
+            {
+                return MineState.Flagged;
+            }
+            else if (HasMine)
+            {
+                return MineState.Mine;
+            }
+            else {
+                return MineState.Covered;
+            }
         }
     }
 }
