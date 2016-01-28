@@ -1,4 +1,7 @@
-﻿namespace WinableMinesweeper
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace WinableMinesweeper
 {
     public class MineCell
     {
@@ -61,5 +64,11 @@
                 return MineState.Covered;
             }
         }
+    }
+
+    public static class MineCellExtension
+    {
+        public static IEnumerable<MineCell> FilterByVisibleState(this IEnumerable<MineCell> cells, MineState visibleState)
+            => cells.Where(c => c.GetVisibleState() == visibleState);
     }
 }
