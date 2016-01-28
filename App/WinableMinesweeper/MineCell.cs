@@ -20,13 +20,28 @@
             Col = col;
         }
 
+        public MineState GetVisibleState()
+        {
+            var state = GetState();
+
+            switch (state)
+            {
+                case MineState.IncorrectlyFlagged:
+                    return MineState.Flagged;
+                case MineState.Mine:
+                    return MineState.Covered;
+                default:
+                    return state;
+            }
+        }
+
         public MineState GetState()
         {
             if (IsUncovered && !HasMine)
             {
                 return MineState.Uncovered;
             }
-            else if (HasMine && IsUncovered)
+            else if (IsUncovered && HasMine)
             {
                 return MineState.MineDetonated;
             }

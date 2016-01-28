@@ -7,18 +7,19 @@ namespace WinableMinesweeper
 {
     public class MineField
     {
-        private readonly MineCell[] _cells;
         private readonly int _rows;
         private readonly int _cols;
         private readonly int _mineCount;
 
         private readonly Stopwatch _chrono = new Stopwatch();
 
+        public MineCell[] Cells { get; }
+
         public GameState GameState { get; private set; }
 
         public TimeSpan Duration => _chrono.Elapsed;
 
-        public int ActualMineCount => _mineCount - _cells.Count(c => c.HasFlag);
+        public int ActualMineCount => _mineCount - Cells.Count(c => c.HasFlag);
 
         public MineField(int rows, int cols, int mineCount)
         {
@@ -26,18 +27,18 @@ namespace WinableMinesweeper
             _cols = cols;
             _mineCount = mineCount;
 
-            _cells = new MineCell[rows * cols];
+            Cells = new MineCell[rows * cols];
 
             for (int row = 0; row < rows; row++)
             {
                 for (int col = 0; col < cols; col++)
                 {
-                    _cells[GetCellIndex(row, col)] = new MineCell(row, col);
+                    Cells[GetCellIndex(row, col)] = new MineCell(row, col);
                 }
             }
         }
 
-        private MineCell GetCell(int row, int col) => _cells[GetCellIndex(row, col)];
+        private MineCell GetCell(int row, int col) => Cells[GetCellIndex(row, col)];
 
         private int GetCellIndex(int row, int col) => row * _cols + col;
 
@@ -59,7 +60,7 @@ namespace WinableMinesweeper
                 }
             }
 
-            foreach (var cell in _cells.Where(c => !c.HasMine))
+            foreach (var cell in Cells.Where(c => !c.HasMine))
             {
                 cell.NeighbourhoodMineCount = GetNeighbours(cell).Count(c => c.HasMine);
             }
@@ -67,7 +68,7 @@ namespace WinableMinesweeper
             _chrono.Start();
         }
 
-        private IEnumerable<MineCell> GetNeighbours(MineCell cell) => GetNeighbours(cell.Row, cell.Col);
+        public IEnumerable<MineCell> GetNeighbours(MineCell cell) => GetNeighbours(cell.Row, cell.Col);
 
         private IEnumerable<MineCell> GetNeighbours(int row, int col)
         {
@@ -91,15 +92,10 @@ namespace WinableMinesweeper
             cell.HasFlag = !cell.HasFlag && !cell.IsUncovered;
         }
 
-        public void ForceFlagOnCell(int row, int col)
-        {
-            var cell = GetCell(row, col);
-            cell.HasFlag = true;
-        }
+        public void UncoverCell(int row, int col) => UncoverCell(GetCell(row, col));
 
-        public void UncoverCell(int row, int col)
+        public void UncoverCell(MineCell cell)
         {
-            var cell = GetCell(row, col);
             if (cell.HasFlag || cell.IsUncovered)
             {
                 return;
@@ -114,10 +110,10 @@ namespace WinableMinesweeper
             else {
                 if (cell.NeighbourhoodMineCount == 0)
                 {
-                    UncoverNeighbours(row, col);
+                    UncoverNeighbours(cell);
                 }
 
-                if (_cells.All(c => c.HasMine || c.IsUncovered))
+                if (Cells.All(c => c.HasMine || c.IsUncovered))
                 {
                     GameState = GameState.victory;
                     _chrono.Stop();
@@ -125,15 +121,16 @@ namespace WinableMinesweeper
             }
         }
 
-        public void UncoverNeighbours(int row, int col)
+        public void UncoverNeighbours(int row, int col) => UncoverNeighbours(GetCell(row, col));
+
+        public void UncoverNeighbours(MineCell cell)
         {
-            var cell = GetCell(row, col);
             var neighbours = GetNeighbours(cell);
             if (!cell.HasFlag && neighbours.Count(c => c.HasFlag) == cell.NeighbourhoodMineCount)
             {
                 foreach (var neighbour in GetNeighbours(cell))
                 {
-                    UncoverCell(neighbour.Row, neighbour.Col);
+                    UncoverCell(neighbour);
                 }
             }
         }
