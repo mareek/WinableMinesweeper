@@ -21,6 +21,15 @@ namespace WinableMinesweeper
 
         public int ActualMineCount => _mineCount - Cells.Count(c => c.HasFlag);
 
+        public MineField(int rows, int cols, params MineCell[] minedCells)
+            :this(rows, cols, minedCells.Length)
+        {
+            foreach (var minedCell in minedCells)
+            {
+                GetCell(minedCell.Row, minedCell.Col).HasMine = true;
+            }
+        }
+
         public MineField(int rows, int cols, int mineCount)
         {
             _rows = rows;
