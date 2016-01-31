@@ -111,7 +111,7 @@ namespace WinableMinesweeper
         {
             if (GameState == GameState.NotStarted)
             {
-                Init(row, col);
+                UncoverCell(row, col);
             }
             else
             {

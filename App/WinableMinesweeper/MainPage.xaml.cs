@@ -29,7 +29,7 @@ namespace WinableMinesweeper
 
         private void EasyButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayNewGame(9,9,10);
+            PlayNewGame(9, 9, 10);
         }
 
         private void MediumButton_Click(object sender, RoutedEventArgs e)

@@ -7,13 +7,27 @@ namespace WinableMinesweeper.Test
         [Fact]
         public void FirstMoveIsAlwaysABlankCell()
         {
-            var firstMove = new MineCell(5, 5);
-            var minefield = new MineField(10, 10, 30);
+            var firstMove = new MineCell(4, 4);
+            var minefield = new MineField(9, 9, 10);
 
             Assert.Equal(GameState.NotStarted, minefield.GameState);
 
             minefield.UncoverCell(firstMove.Row, firstMove.Col);
 
+            Assert.Equal(GameState.InProgress, minefield.GameState);
+
+            var uncoveredCell = minefield.GetCell(firstMove.Row, firstMove.Col);
+            Assert.Equal(MineState.Uncovered, uncoveredCell.GetState());
+            Assert.Equal(0, uncoveredCell.NeighbourhoodMineCount);
+        }
+
+        [Fact]
+        public void FirstMoveWithFlagUncoverTheFirstCell()
+        {
+            var firstMove = new MineCell(4, 4);
+            var minefield = new MineField(9, 9, 10);
+
+            minefield.UncoverCell(firstMove.Row, firstMove.Col);
             Assert.Equal(GameState.InProgress, minefield.GameState);
 
             var uncoveredCell = minefield.GetCell(firstMove.Row, firstMove.Col);
