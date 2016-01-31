@@ -14,8 +14,8 @@ namespace WinableMinesweeper
 
         public bool PlayNextStep()
         {
-            var uncoveredCells = _mineField.Cells.FilterByVisibleState(MineState.Uncovered);
-            return uncoveredCells.Any(cell => PlayEasyMoves(cell, true)) 
+            var uncoveredCells = _mineField.Cells.FilterByVisibleState(MineState.Uncovered).ToArray();
+            return uncoveredCells.Any(cell => PlayEasyMoves(cell, true))
                 || PlayHardMoves(uncoveredCells, true);
         }
 
@@ -24,11 +24,11 @@ namespace WinableMinesweeper
             var hasMoved = false;
             do
             {
-                var uncoveredCells = _mineField.Cells.FilterByVisibleState(MineState.Uncovered);
-                hasMoved = uncoveredCells.Count(cell => PlayEasyMoves(cell, false)) > 0 
+                var uncoveredCells = _mineField.Cells.FilterByVisibleState(MineState.Uncovered).ToArray();
+                hasMoved = uncoveredCells.Count(cell => PlayEasyMoves(cell, false)) > 0
                         || PlayHardMoves(uncoveredCells, false);
             }
-            while (hasMoved && _mineField.GameState == GameState.inProgress);
+            while (hasMoved && _mineField.GameState == GameState.InProgress);
         }
 
         private bool PlayEasyMoves(MineCell cell, bool returnOnFirstAction)
@@ -58,21 +58,22 @@ namespace WinableMinesweeper
             return result;
         }
 
-        private bool PlayHardMoves(IEnumerable<MineCell> uncoveredCells, bool returnOnFirstAction)
+        private bool PlayHardMoves(MineCell[] uncoveredCells, bool returnOnFirstAction)
         {
             var minedZones = GetMinedZones(uncoveredCells);
 
             var hardMoves = from zone in minedZones
                             from other in minedZones
                             where zone.Intersect(other)
-                            select PlayHardMoves(zone, other, returnOnFirstAction);
+                               && PlayHardMoves(zone, other, returnOnFirstAction)
+                            select 1;
 
             return returnOnFirstAction
                         ? hardMoves.Any()
-                        : hardMoves.Count(m => m) > 0;
+                        : hardMoves.Count() > 0;
         }
 
-        private ICollection<MinedZone> GetMinedZones(IEnumerable<MineCell> uncoveredCells)
+        private ICollection<MinedZone> GetMinedZones(MineCell[] uncoveredCells)
         {
             var minedZonesById = new Dictionary<string, MinedZone>();
             foreach (var cell in uncoveredCells)
@@ -140,7 +141,7 @@ namespace WinableMinesweeper
             {
                 MineCount = mineCount;
                 _cells = cells;
-                Id = string.Join("|", _cells.Select(c => $"{c.Row},{c.Col}"));
+                Id = string.Join("|", _cells.Select(c => $"{c.Row},{c.Col}").OrderBy(c => c));
             }
 
             public bool Intersect(MinedZone other) => other.Id != Id && _cells.Intersect(other._cells).Any();

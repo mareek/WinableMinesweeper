@@ -64,6 +64,25 @@ namespace WinableMinesweeper
                 return MineState.Covered;
             }
         }
+
+        public char GetDebugState()
+        {
+            switch (GetState())
+            {
+                case MineState.Covered:
+                case MineState.Mine:
+                    return '=';
+                case MineState.Uncovered:
+                    return NeighbourhoodMineCount == 0 ? ' ' : NeighbourhoodMineCount.ToString()[0];
+                case MineState.Flagged:
+                case MineState.IncorrectlyFlagged:
+                    return '!';
+                case MineState.MineDetonated:
+                    return '¤';
+                default:
+                    return '?';
+            }
+        }
     }
 
     public static class MineCellExtension

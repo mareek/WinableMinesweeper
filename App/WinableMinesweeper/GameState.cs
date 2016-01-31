@@ -2,8 +2,9 @@
 {
     public enum GameState
     {
-        inProgress,
-        victory,
-        failure
+        NotStarted,
+        InProgress,
+        Victory,
+        Defeat
     }
 }

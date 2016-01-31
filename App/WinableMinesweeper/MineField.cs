@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace WinableMinesweeper
 {
@@ -22,12 +23,16 @@ namespace WinableMinesweeper
         public int ActualMineCount => _mineCount - Cells.Count(c => c.HasFlag);
 
         public MineField(int rows, int cols, params MineCell[] minedCells)
-            :this(rows, cols, minedCells.Length)
+            : this(rows, cols, minedCells.Length)
         {
             foreach (var minedCell in minedCells)
             {
                 GetCell(minedCell.Row, minedCell.Col).HasMine = true;
             }
+
+            InitMineCount();
+
+            GameState = GameState.InProgress;
         }
 
         public MineField(int rows, int cols, int mineCount)
@@ -35,6 +40,7 @@ namespace WinableMinesweeper
             _rows = rows;
             _cols = cols;
             _mineCount = mineCount;
+            GameState = GameState.NotStarted;
 
             Cells = new MineCell[rows * cols];
 
@@ -47,7 +53,7 @@ namespace WinableMinesweeper
             }
         }
 
-        private MineCell GetCell(int row, int col) => Cells[GetCellIndex(row, col)];
+        public MineCell GetCell(int row, int col) => Cells[GetCellIndex(row, col)];
 
         private int GetCellIndex(int row, int col) => row * _cols + col;
 
@@ -69,12 +75,18 @@ namespace WinableMinesweeper
                 }
             }
 
+            InitMineCount();
+
+            GameState = GameState.InProgress;
+            _chrono.Start();
+        }
+
+        private void InitMineCount()
+        {
             foreach (var cell in Cells.Where(c => !c.HasMine))
             {
                 cell.NeighbourhoodMineCount = GetNeighbours(cell).Count(c => c.HasMine);
             }
-
-            _chrono.Start();
         }
 
         public IEnumerable<MineCell> GetNeighbours(MineCell cell) => GetNeighbours(cell.Row, cell.Col);
@@ -97,14 +109,26 @@ namespace WinableMinesweeper
 
         public void ToggleFlagOnCell(int row, int col)
         {
-            var cell = GetCell(row, col);
-            cell.HasFlag = !cell.HasFlag && !cell.IsUncovered;
+            if (GameState == GameState.NotStarted)
+            {
+                Init(row, col);
+            }
+            else
+            {
+                var cell = GetCell(row, col);
+                cell.HasFlag = !cell.HasFlag && !cell.IsUncovered;
+            }
         }
 
         public void UncoverCell(int row, int col) => UncoverCell(GetCell(row, col));
 
         public void UncoverCell(MineCell cell)
         {
+            if (GameState == GameState.NotStarted)
+            {
+                Init(cell.Row, cell.Col);
+            }
+
             if (cell.HasFlag || cell.IsUncovered)
             {
                 return;
@@ -113,7 +137,7 @@ namespace WinableMinesweeper
             cell.IsUncovered = true;
             if (cell.HasMine)
             {
-                GameState = GameState.failure;
+                GameState = GameState.Defeat;
                 _chrono.Stop();
             }
             else {
@@ -122,9 +146,9 @@ namespace WinableMinesweeper
                     UncoverNeighbours(cell);
                 }
 
-                if (Cells.All(c => c.HasMine || c.IsUncovered))
+                if (Cells.All(c => c.HasMine ^ c.IsUncovered))
                 {
-                    GameState = GameState.victory;
+                    GameState = GameState.Victory;
                     _chrono.Stop();
                 }
             }
@@ -142,6 +166,35 @@ namespace WinableMinesweeper
                     UncoverCell(neighbour);
                 }
             }
+        }
+
+        public void Reset()
+        {
+            foreach (var mineCell in Cells)
+            {
+                mineCell.IsUncovered = false;
+                mineCell.HasFlag = false;
+            }
+
+            GameState = GameState.InProgress;
+            _chrono.Reset();
+            _chrono.Start();
+        }
+
+        public string GetDebugState()
+        {
+            var stateBuilder = new StringBuilder(Cells.Length + _rows);
+            for (int row = 0; row < _rows; row++)
+            {
+                for (int col = 0; col < _cols; col++)
+                {
+                    stateBuilder.Append(GetCell(row, col).GetDebugState());
+                }
+
+                stateBuilder.Append('\n');
+            }
+
+            return stateBuilder.ToString();
         }
     }
 }
