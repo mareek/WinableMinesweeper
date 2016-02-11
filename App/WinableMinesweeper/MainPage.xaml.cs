@@ -44,7 +44,7 @@ namespace WinableMinesweeper
 
         private void PlayNewGame(int rows, int cols, int mineCount)
         {
-
+            Frame.Navigate(typeof(MineFieldPage), new GameSetup(rows, cols, mineCount));
         }
     }
 }
