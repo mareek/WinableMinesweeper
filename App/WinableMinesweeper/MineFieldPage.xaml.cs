@@ -56,7 +56,7 @@ namespace WinableMinesweeper
             {
                 for (int col = 0; col < _setup.Cols; col++)
                 {
-                    var cell = new TextBlock { Text = row + "-" + col };
+                    var cell = new MineFieldCell(row, col);
                     Grid.SetRow(cell, row);
                     Grid.SetColumn(cell, col);
                     MineGrid.Children.Add(cell);
