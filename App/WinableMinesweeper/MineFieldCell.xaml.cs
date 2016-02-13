@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Text;
@@ -20,31 +21,62 @@ namespace WinableMinesweeper
 {
     public sealed partial class MineFieldCell : UserControl
     {
+        private readonly Func<MineFieldCell, Task> _leftClick;
+        private readonly Func<MineFieldCell, Task> _rightClick;
+
         public MineFieldCell()
         {
             this.InitializeComponent();
         }
 
-        public MineFieldCell(int row, int col)
+        public MineFieldCell(int row, int col, MineCell mineCell, Func<MineFieldCell, Task> leftClick, Func<MineFieldCell, Task> rightClick)
             : this()
         {
             Row = row;
             Col = col;
+            MineCell = mineCell;
 
-            CellTextBlock.Text = $"{row}-{col}";
+            _leftClick = leftClick;
+            _rightClick = rightClick;
         }
 
         public int Row { get; }
         public int Col { get; }
+        public MineCell MineCell { get; }
 
-        private void UserControl_Tapped(object sender, TappedRoutedEventArgs e)
+        public void RefreshDisplay(bool flagMode)
         {
-            CellTextBlock.FontWeight = (CellTextBlock.FontWeight.Weight == FontWeights.Bold.Weight) ? FontWeights.Normal : FontWeights.Bold;
+            switch (MineCell?.GetVisibleState()?? MineState.Covered)
+            {
+                case MineState.Covered:
+                    CellTextBlock.Text = flagMode ? "?" : "";
+                    break;
+                case MineState.Uncovered:
+                    CellTextBlock.Text = MineCell.NeighbourhoodMineCount.ToString();
+                    break;
+                case MineState.Flagged:
+                    CellTextBlock.Text = "!";
+                    break;
+                case MineState.IncorrectlyFlagged:
+                    CellTextBlock.Text = "/";
+                    break;
+                case MineState.Mine:
+                    CellTextBlock.Text = "*";
+                    break;
+                case MineState.MineDetonated:
+                    CellTextBlock.Text = "@";
+                    break;
+            }
         }
 
-        private void UserControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        private async void UserControl_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            CellTextBlock.FontStyle = (CellTextBlock.FontStyle == FontStyle.Italic) ? FontStyle.Normal : FontStyle.Italic;
+            await _leftClick(this);
+        }
+
+        private async void UserControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            await _rightClick(this);
         }
     }
 }

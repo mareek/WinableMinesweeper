@@ -11,6 +11,8 @@
     Tapped="UserControl_Tapped"
     RightTapped="UserControl_RightTapped">
     <Grid>
-        <TextBlock Name="CellTextBlock"/>
+        <Border BorderBrush="Black" BorderThickness="1">
+            <TextBlock Name="CellTextBlock" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        </Border>
     </Grid>
 </UserControl>
