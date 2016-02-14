@@ -14,7 +14,7 @@ namespace WinableMinesweeper
     public sealed partial class MineFieldPage : Page
     {
         private MineField _minefield;
-        private bool _flagMode;
+        private bool _flagMode = false;
 
         public MineFieldPage()
         {
@@ -59,9 +59,13 @@ namespace WinableMinesweeper
             }
         }
 
-        private async Task InitMineFieldIfNeeded(int rowStart, int colStart)
+        private async Task<bool> InitMineFieldIfNeeded(int rowStart, int colStart)
         {
-            if (_minefield.GameState == GameState.NotStarted)
+            if (_minefield.GameState != GameState.NotStarted)
+            {
+                return false;
+            }
+            else
             {
                 bool isWinable = false;
                 int attempt = 0;
@@ -77,14 +81,17 @@ namespace WinableMinesweeper
                 } while (!isWinable);
 
                 _minefield.Reset(true);
+                _minefield.UncoverCell(rowStart, colStart);
+                Refresh();
+                return true;
             }
         }
 
-        private void Refresh(GameState gameState)
+        private void Refresh()
         {
             foreach (var fieldCell in MineGrid.Children.OfType<MineFieldCell>())
             {
-                fieldCell.RefreshDisplay(_flagMode, gameState);
+                fieldCell.RefreshDisplay(_flagMode, _minefield.GameState);
             }
         }
 
@@ -100,25 +107,38 @@ namespace WinableMinesweeper
 
         private async Task Click(MineFieldCell fieldCell, bool uncover)
         {
+            var cell = fieldCell.MineCell;
+
             if (_minefield.GameState == GameState.Defeat || _minefield.GameState == GameState.Victory)
             {
                 return;
             }
 
-            var row = fieldCell.Row;
-            var col = fieldCell.Col;
-            await InitMineFieldIfNeeded(row, col);
-
-            if (uncover)
+            if (await InitMineFieldIfNeeded(cell.Row, cell.Col))
             {
-                _minefield.UncoverCell(row, col);
+                return;
+            }
+
+            if (cell.IsUncovered)
+            {
+                _minefield.UncoverNeighbours(cell);
+            }
+            else if (!uncover)
+            {
+                _minefield.ToggleFlagOnCell(cell.Row, cell.Col);
             }
             else
             {
-                _minefield.ToggleFlagOnCell(row, col);
+                _minefield.UncoverCell(cell);
             }
 
-            Refresh(_minefield.GameState);
+            Refresh();
+        }
+
+        private void FlagButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            _flagMode = !_flagMode;
+            Refresh();
         }
     }
 }
