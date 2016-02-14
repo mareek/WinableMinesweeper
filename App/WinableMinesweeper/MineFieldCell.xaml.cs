@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -45,9 +35,10 @@ namespace WinableMinesweeper
         public int Col { get; }
         public MineCell MineCell { get; }
 
-        public void RefreshDisplay(bool flagMode)
+        public void RefreshDisplay(bool flagMode, GameState gameState)
         {
-            switch (MineCell?.GetVisibleState() ?? MineState.Covered)
+            var mineState = (gameState == GameState.Victory || gameState == GameState.Defeat) ? MineCell.GetState() : MineCell.GetVisibleState();
+            switch (mineState)
             {
                 case MineState.Covered:
                     CellTextBlock.Text = flagMode ? "?" : "";
@@ -60,7 +51,7 @@ namespace WinableMinesweeper
                     CellTextBlock.Text = "!";
                     break;
                 case MineState.IncorrectlyFlagged:
-                    CellTextBlock.Text = "/";
+                    CellTextBlock.Text = "X";
                     CellBorder.Background = new SolidColorBrush(Colors.Orange);
                     break;
                 case MineState.Mine:

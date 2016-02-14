@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -74,8 +64,11 @@ namespace WinableMinesweeper
             if (_minefield.GameState == GameState.NotStarted)
             {
                 bool isWinable = false;
+                int attempt = 0;
+                var chrono = Stopwatch.StartNew();
                 do
                 {
+                    DebugTextBlock.Text = $"Attempt n°{++attempt} in {chrono.ElapsedMilliseconds / 1000m}";
                     _minefield.Reset(false);
                     _minefield.Init(rowStart, colStart);
                     _minefield.UncoverCell(rowStart, colStart);
@@ -87,11 +80,11 @@ namespace WinableMinesweeper
             }
         }
 
-        private void Refresh()
+        private void Refresh(GameState gameState)
         {
             foreach (var fieldCell in MineGrid.Children.OfType<MineFieldCell>())
             {
-                fieldCell.RefreshDisplay(_flagMode);
+                fieldCell.RefreshDisplay(_flagMode, gameState);
             }
         }
 
@@ -107,6 +100,11 @@ namespace WinableMinesweeper
 
         private async Task Click(MineFieldCell fieldCell, bool uncover)
         {
+            if (_minefield.GameState == GameState.Defeat || _minefield.GameState == GameState.Victory)
+            {
+                return;
+            }
+
             var row = fieldCell.Row;
             var col = fieldCell.Col;
             await InitMineFieldIfNeeded(row, col);
@@ -120,7 +118,7 @@ namespace WinableMinesweeper
                 _minefield.ToggleFlagOnCell(row, col);
             }
 
-            Refresh();
+            Refresh(_minefield.GameState);
         }
     }
 }
