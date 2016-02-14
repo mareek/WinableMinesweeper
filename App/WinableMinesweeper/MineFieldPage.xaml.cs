@@ -44,8 +44,8 @@ namespace WinableMinesweeper
             MineGrid.ColumnDefinitions.Clear();
             MineGrid.RowDefinitions.Clear();
             MineGrid.Children.Clear();
-            MineGrid.Height = 20 * _minefield.Rows;
-            MineGrid.Width = 20 * _minefield.Cols;
+            MineGrid.Height = 40 * _minefield.Rows;
+            MineGrid.Width = 40 * _minefield.Cols;
 
             for (int row = 0; row < _minefield.Rows; row++)
             {

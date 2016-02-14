@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -46,12 +47,13 @@ namespace WinableMinesweeper
 
         public void RefreshDisplay(bool flagMode)
         {
-            switch (MineCell?.GetVisibleState()?? MineState.Covered)
+            switch (MineCell?.GetVisibleState() ?? MineState.Covered)
             {
                 case MineState.Covered:
                     CellTextBlock.Text = flagMode ? "?" : "";
                     break;
                 case MineState.Uncovered:
+                    Uncover();
                     CellTextBlock.Text = MineCell.NeighbourhoodMineCount.ToString();
                     break;
                 case MineState.Flagged:
@@ -59,14 +61,24 @@ namespace WinableMinesweeper
                     break;
                 case MineState.IncorrectlyFlagged:
                     CellTextBlock.Text = "/";
+                    CellBorder.Background = new SolidColorBrush(Colors.Orange);
                     break;
                 case MineState.Mine:
+                    Uncover();
                     CellTextBlock.Text = "*";
                     break;
                 case MineState.MineDetonated:
                     CellTextBlock.Text = "@";
+                    Uncover();
+                    CellBorder.Background = new SolidColorBrush(Colors.Red);
                     break;
             }
+        }
+
+        private void Uncover()
+        {
+            CellBorder.Background = new SolidColorBrush(Colors.Transparent);
+            CellBorder.BorderThickness = new Thickness(0);
         }
 
         private async void UserControl_Tapped(object sender, TappedRoutedEventArgs e)

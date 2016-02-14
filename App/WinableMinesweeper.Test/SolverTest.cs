@@ -4,7 +4,7 @@ using Xunit;
 
 namespace WinableMinesweeper.Test
 {
-    public class UnitTest1
+    public class SolverTest
     {
         [Theory]
         [InlineData("Easy", 0, 0, GameState.Victory, 5, 5, new[] { 2, 2, 2, 3 })]
@@ -26,7 +26,7 @@ namespace WinableMinesweeper.Test
 
             Assert.Equal(mineField.GameState, finalState);
 
-            mineField.Reset();
+            mineField.Reset(true);
 
             mineField.UncoverCell(rowStart, colStart);
 
