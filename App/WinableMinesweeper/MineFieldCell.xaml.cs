@@ -35,6 +35,16 @@ namespace WinableMinesweeper
         public int Col { get; }
         public MineCell MineCell { get; }
 
+        private async void UserControl_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await _leftClick(this);
+        }
+
+        private async void UserControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            await _rightClick(this);
+        }
+
         public void RefreshDisplay(bool flagMode, GameState gameState)
         {
             var mineState = (gameState == GameState.Victory || gameState == GameState.Defeat) ? MineCell.GetState() : MineCell.GetVisibleState();
@@ -46,6 +56,7 @@ namespace WinableMinesweeper
                 case MineState.Uncovered:
                     Uncover();
                     CellTextBlock.Text = MineCell.NeighbourhoodMineCount.ToString();
+                    CellTextBlock.Foreground= new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount));
                     break;
                 case MineState.Flagged:
                     CellTextBlock.Text = "!";
@@ -72,14 +83,27 @@ namespace WinableMinesweeper
             CellBorder.BorderThickness = new Thickness(0);
         }
 
-        private async void UserControl_Tapped(object sender, TappedRoutedEventArgs e)
+        private Color GetNumberColor(int neighbourhoodCount)
         {
-            await _leftClick(this);
-        }
-
-        private async void UserControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            await _rightClick(this);
+            switch (neighbourhoodCount)
+            {
+                case 0:
+                    return Colors.Transparent;
+                case 1:
+                    return Colors.LightBlue;
+                case 2:
+                    return Colors.LightGreen;
+                case 3:
+                    return Colors.Red;
+                case 4:
+                    return Colors.Blue;
+                case 5:
+                    return Colors.SaddleBrown;
+                case 6:
+                    return Colors.Green;
+                default:
+                    return Colors.Black;
+            }
         }
     }
 }
