@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace WinableMinesweeper
 {
@@ -19,6 +19,8 @@ namespace WinableMinesweeper
         public MineFieldPage()
         {
             this.InitializeComponent();
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -135,10 +137,17 @@ namespace WinableMinesweeper
             Refresh();
         }
 
-        private void FlagButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void FlagButton_Click(object sender, RoutedEventArgs e)
         {
             _flagMode = !_flagMode;
             Refresh();
         }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+            e.Handled = true;
+        }
+
     }
 }
