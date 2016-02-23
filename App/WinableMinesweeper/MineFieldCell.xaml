@@ -10,7 +10,7 @@
     d:DesignWidth="40"
     Tapped="UserControl_Tapped"
     RightTapped="UserControl_RightTapped">
-    <Border Name="CellBorder" BorderBrush="Black" BorderThickness="1" Background="LightGray" CornerRadius="3" Margin="1">
+    <Border Name="CellBorder" BorderBrush="Black" BorderThickness="1" Background="LightGray" CornerRadius="3" Margin="2">
         <Viewbox>
             <TextBlock Name="CellTextBlock" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"></TextBlock>
         </Viewbox>

@@ -8,18 +8,19 @@
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="64"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Button Name="FlagButton" HorizontalAlignment="Center" Click="FlagButton_Click">FLAG</Button>
-        <TextBlock Name="DebugTextBlock" HorizontalAlignment="Center" Grid.Row="1"></TextBlock>
-        <Viewbox Grid.Row="2">
-            <Border BorderBrush="Black" BorderThickness="1">
-                <Grid Name="MineGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Viewbox HorizontalAlignment="Right">
+            <Button Name="FlagButton" Click="FlagButton_Click">FLAG</Button>
+        </Viewbox>
+        <Viewbox HorizontalAlignment="Center">
+            <TextBlock Name="DebugTextBlock"></TextBlock>
+        </Viewbox>
+        <Viewbox Grid.Row="1" Margin="16">
+            <Grid Name="MineGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-                </Grid>
-            </Border>
+            </Grid>
         </Viewbox>
     </Grid>
 </Page>

@@ -47,16 +47,18 @@ namespace WinableMinesweeper
 
         public void RefreshDisplay(bool flagMode, GameState gameState)
         {
+            CellTextBlock.Foreground = new SolidColorBrush(Colors.Black);
             var mineState = (gameState == GameState.Victory || gameState == GameState.Defeat) ? MineCell.GetState() : MineCell.GetVisibleState();
             switch (mineState)
             {
                 case MineState.Covered:
                     CellTextBlock.Text = flagMode ? "?" : "";
+                    CellTextBlock.Foreground = new SolidColorBrush(Colors.DarkGray);
                     break;
                 case MineState.Uncovered:
                     Uncover();
                     CellTextBlock.Text = MineCell.NeighbourhoodMineCount.ToString();
-                    CellTextBlock.Foreground= new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount));
+                    CellTextBlock.Foreground = new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount));
                     break;
                 case MineState.Flagged:
                     CellTextBlock.Text = "!";

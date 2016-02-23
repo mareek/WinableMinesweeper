@@ -128,7 +128,8 @@ namespace WinableMinesweeper
                 GameState = GameState.Defeat;
                 _chrono.Stop();
             }
-            else {
+            else
+            {
                 if (cell.NeighbourhoodMineCount == 0)
                 {
                     UncoverNeighbours(cell);

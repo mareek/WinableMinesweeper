@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
@@ -95,6 +96,15 @@ namespace WinableMinesweeper
             {
                 fieldCell.RefreshDisplay(_flagMode, _minefield.GameState);
             }
+
+            if (_minefield.GameState == GameState.Defeat)
+            {
+                DebugTextBlock.Text = $"You lost in {Math.Floor(_minefield.Duration.TotalSeconds)} s. :-(";
+            }
+            else if (_minefield.GameState == GameState.Victory)
+            {
+                DebugTextBlock.Text = $"You won in {Math.Floor(_minefield.Duration.TotalSeconds)} s.  B-)";
+            }
         }
 
         private async Task LeftClick(MineFieldCell fieldCell)
@@ -111,12 +121,9 @@ namespace WinableMinesweeper
         {
             var cell = fieldCell.MineCell;
 
-            if (_minefield.GameState == GameState.Defeat || _minefield.GameState == GameState.Victory)
-            {
-                return;
-            }
-
-            if (await InitMineFieldIfNeeded(cell.Row, cell.Col))
+            if (_minefield.GameState == GameState.Defeat
+                || _minefield.GameState == GameState.Victory
+                || await InitMineFieldIfNeeded(cell.Row, cell.Col))
             {
                 return;
             }
