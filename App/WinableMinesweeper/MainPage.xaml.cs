@@ -29,22 +29,22 @@ namespace WinableMinesweeper
 
         private void EasyButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayNewGame(9, 9, 10);
+            PlayNewGame(Dificulty.Easy);
         }
 
         private void MediumButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayNewGame(16, 16, 40);
+            PlayNewGame(Dificulty.Medium);
         }
 
         private void HardButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayNewGame(16, 30, 99);
+            PlayNewGame(Dificulty.Hard);
         }
 
-        private void PlayNewGame(int rows, int cols, int mineCount)
+        private void PlayNewGame(Dificulty dificulty)
         {
-            Frame.Navigate(typeof(MineFieldPage), new GameSetup(rows, cols, mineCount));
+            Frame.Navigate(typeof(MineFieldPage), new GameSetup(dificulty));
         }
     }
 }

@@ -2,12 +2,32 @@
 {
     public class GameSetup
     {
-        public GameSetup(int rows, int cols, int mineCount)
+        public GameSetup(Dificulty dificulty)
         {
-            Rows = rows;
-            Cols = cols;
-            MineCount = mineCount;
+            GameDificulty = dificulty;
+
+            switch (dificulty)
+            {
+                case Dificulty.Medium:
+                    Rows = 16;
+                    Cols = 16;
+                    MineCount = 40;
+                    break;
+                case Dificulty.Hard:
+                    Rows = 16;
+                    Cols = 30;
+                    MineCount = 99;
+                    break;
+                case Dificulty.Easy:
+                default:
+                    Rows = 9;
+                    Cols = 9;
+                    MineCount = 10;
+                    break;
+            }
         }
+
+        public Dificulty? GameDificulty { get; }
 
         public int Rows { get; }
         public int Cols { get; }

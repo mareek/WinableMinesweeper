@@ -16,6 +16,7 @@ namespace WinableMinesweeper
     {
         private MineField _minefield;
         private bool _flagMode = false;
+        private Dificulty? _dificulty;
 
         public MineFieldPage()
         {
@@ -27,7 +28,8 @@ namespace WinableMinesweeper
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var setup = e.Parameter as GameSetup ?? new GameSetup(9, 9, 10);
+            var setup = e.Parameter as GameSetup ?? new GameSetup(Dificulty.Easy);
+            _dificulty = setup.GameDificulty;
             _minefield = new MineField(setup.Rows, setup.Cols, setup.MineCount);
             InitGrid();
         }
@@ -97,13 +99,24 @@ namespace WinableMinesweeper
                 fieldCell.RefreshDisplay(_flagMode, _minefield.GameState);
             }
 
-            if (_minefield.GameState == GameState.Defeat)
+            var seconds = (int)Math.Floor(_minefield.Duration.TotalSeconds);
+            if (_minefield.GameState == GameState.Victory)
             {
-                DebugTextBlock.Text = $"You lost in {Math.Floor(_minefield.Duration.TotalSeconds)} s. :-(";
+                Victory(seconds);
             }
-            else if (_minefield.GameState == GameState.Victory)
+            else if (_minefield.GameState == GameState.Defeat)
             {
-                DebugTextBlock.Text = $"You won in {Math.Floor(_minefield.Duration.TotalSeconds)} s.  B-)";
+                DebugTextBlock.Text = $"You lost in {seconds} s. :-(";
+            }
+        }
+
+        private void Victory(int seconds)
+        {
+            DebugTextBlock.Text = $"You won in {seconds} s.  B-)";
+            if (_dificulty.HasValue && seconds < (HighScores.GetHighScore(_dificulty.Value) ?? int.MaxValue))
+            {
+                DebugTextBlock.Text += "\nNEW HIGH SCORE !";
+                HighScores.SetHighScore(_dificulty.Value, seconds);
             }
         }
 
