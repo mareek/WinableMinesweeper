@@ -11,11 +11,14 @@
             <RowDefinition Height="64"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Viewbox HorizontalAlignment="Right">
-            <Button Name="FlagButton" Click="FlagButton_Click">FLAG</Button>
+        <Viewbox HorizontalAlignment="Left">
+            <Button Name="ReloadButton" Click="ReloadButton_Click">Reload</Button>
         </Viewbox>
         <Viewbox HorizontalAlignment="Center">
             <TextBlock Name="DebugTextBlock"></TextBlock>
+        </Viewbox>
+        <Viewbox HorizontalAlignment="Right">
+            <Button Name="FlagButton" Click="FlagButton_Click">Flag</Button>
         </Viewbox>
         <Viewbox Grid.Row="1" Margin="16">
             <Grid Name="MineGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

@@ -169,5 +169,11 @@ namespace WinableMinesweeper
             e.Handled = true;
         }
 
+        private void ReloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            DebugTextBlock.Text = "";
+            _minefield.Reset(false);
+            Refresh();
+        }
     }
 }

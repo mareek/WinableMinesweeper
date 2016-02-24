@@ -12,6 +12,8 @@ namespace WinableMinesweeper
 {
     public sealed partial class MineFieldCell : UserControl
     {
+        private static readonly SolidColorBrush DefaultTextColorBrush = new SolidColorBrush(Colors.Black);
+
         private readonly Func<MineFieldCell, Task> _leftClick;
         private readonly Func<MineFieldCell, Task> _rightClick;
 
@@ -47,13 +49,13 @@ namespace WinableMinesweeper
 
         public void RefreshDisplay(bool flagMode, GameState gameState)
         {
-            CellTextBlock.Foreground = new SolidColorBrush(Colors.Black);
             var mineState = (gameState == GameState.Victory || gameState == GameState.Defeat) ? MineCell.GetState() : MineCell.GetVisibleState();
             switch (mineState)
             {
                 case MineState.Covered:
+                    Cover();
                     CellTextBlock.Text = flagMode ? "?" : "";
-                    CellTextBlock.Foreground = new SolidColorBrush(Colors.DarkGray);
+                    CellTextBlock.Foreground = new SolidColorBrush(new Color { R = 0, G = 0, B = 0, A = 50 });
                     break;
                 case MineState.Uncovered:
                     Uncover();
@@ -61,9 +63,11 @@ namespace WinableMinesweeper
                     CellTextBlock.Foreground = new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount));
                     break;
                 case MineState.Flagged:
+                    Cover();
                     CellTextBlock.Text = "!";
                     break;
                 case MineState.IncorrectlyFlagged:
+                    Cover();
                     CellTextBlock.Text = "X";
                     CellBorder.Background = new SolidColorBrush(Colors.Orange);
                     break;
@@ -72,8 +76,8 @@ namespace WinableMinesweeper
                     CellTextBlock.Text = "*";
                     break;
                 case MineState.MineDetonated:
+                    Cover();
                     CellTextBlock.Text = "@";
-                    Uncover();
                     CellBorder.Background = new SolidColorBrush(Colors.Red);
                     break;
             }
@@ -81,8 +85,16 @@ namespace WinableMinesweeper
 
         private void Uncover()
         {
+            CellTextBlock.Foreground = DefaultTextColorBrush;
             CellBorder.Background = new SolidColorBrush(Colors.Transparent);
             CellBorder.BorderThickness = new Thickness(0);
+        }
+
+        private void Cover()
+        {
+            CellTextBlock.Foreground = DefaultTextColorBrush;
+            CellBorder.Background = new SolidColorBrush(Colors.LightGray);
+            CellBorder.BorderThickness = new Thickness(1);
         }
 
         private Color GetNumberColor(int neighbourhoodCount)
