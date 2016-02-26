@@ -17,6 +17,8 @@ namespace WinableMinesweeper
         private readonly Func<MineFieldCell, Task> _leftClick;
         private readonly Func<MineFieldCell, Task> _rightClick;
 
+        private MineState _previousState;
+
         public MineFieldCell()
         {
             this.InitializeComponent();
@@ -29,6 +31,7 @@ namespace WinableMinesweeper
             Col = col;
             MineCell = mineCell;
 
+            _previousState = MineState.Covered;
             _leftClick = leftClick;
             _rightClick = rightClick;
         }
@@ -49,18 +52,26 @@ namespace WinableMinesweeper
 
         public void RefreshDisplay(bool flagMode, GameState gameState)
         {
-            var mineState = (gameState == GameState.Victory || gameState == GameState.Defeat) ? MineCell.GetState() : MineCell.GetVisibleState();
+            var mineState = (gameState == GameState.Victory || gameState == GameState.Defeat) ? MineCell.GetState() : MineCell.GetVisibleState(flagMode);
+
+            if (_previousState == mineState)
+            {
+                return;
+            }
+
             switch (mineState)
             {
                 case MineState.Covered:
                     Cover();
-                    CellTextBlock.Text = flagMode ? "?" : "";
-                    CellTextBlock.Foreground = new SolidColorBrush(new Color { R = 0, G = 0, B = 0, A = 50 });
+                    CellTextBlock.Text = "";
+                    break;
+                case MineState.CoveredFlagMode:
+                    Cover(new SolidColorBrush(new Color { R = 0, G = 0, B = 0, A = 50 }));
+                    CellTextBlock.Text = "?";
                     break;
                 case MineState.Uncovered:
-                    Uncover();
+                    Uncover(new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount)));
                     CellTextBlock.Text = MineCell.NeighbourhoodMineCount.ToString();
-                    CellTextBlock.Foreground = new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount));
                     break;
                 case MineState.Flagged:
                     Cover();
@@ -83,16 +94,16 @@ namespace WinableMinesweeper
             }
         }
 
-        private void Uncover()
+        private void Uncover(Brush foreground = null)
         {
-            CellTextBlock.Foreground = DefaultTextColorBrush;
+            CellTextBlock.Foreground = foreground ?? DefaultTextColorBrush;
             CellBorder.Background = new SolidColorBrush(Colors.Transparent);
             CellBorder.BorderThickness = new Thickness(0);
         }
 
-        private void Cover()
+        private void Cover(Brush foreground = null)
         {
-            CellTextBlock.Foreground = DefaultTextColorBrush;
+            CellTextBlock.Foreground = foreground ?? DefaultTextColorBrush;
             CellBorder.Background = new SolidColorBrush(Colors.LightGray);
             CellBorder.BorderThickness = new Thickness(1);
         }

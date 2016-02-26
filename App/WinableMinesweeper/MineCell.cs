@@ -23,7 +23,7 @@ namespace WinableMinesweeper
             Col = col;
         }
 
-        public MineState GetVisibleState()
+        public MineState GetVisibleState(bool flagMode)
         {
             var state = GetState();
 
@@ -32,7 +32,8 @@ namespace WinableMinesweeper
                 case MineState.IncorrectlyFlagged:
                     return MineState.Flagged;
                 case MineState.Mine:
-                    return MineState.Covered;
+                case MineState.Covered:
+                    return flagMode ? MineState.CoveredFlagMode : MineState.Covered;
                 default:
                     return state;
             }
@@ -88,6 +89,6 @@ namespace WinableMinesweeper
     public static class MineCellExtension
     {
         public static IEnumerable<MineCell> FilterByVisibleState(this IEnumerable<MineCell> cells, MineState visibleState)
-            => cells.Where(c => c.GetVisibleState() == visibleState);
+            => cells.Where(c => c.GetVisibleState(false) == visibleState);
     }
 }
