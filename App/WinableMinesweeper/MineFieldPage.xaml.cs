@@ -31,6 +31,7 @@ namespace WinableMinesweeper
             var setup = e.Parameter as GameSetup ?? new GameSetup(Dificulty.Easy);
             _dificulty = setup.GameDificulty;
             _minefield = new MineField(setup.Rows, setup.Cols, setup.MineCount);
+            _flagMode = Settings.FlagMode;
             InitGrid();
         }
 
@@ -62,6 +63,8 @@ namespace WinableMinesweeper
                     MineGrid.Children.Add(cell);
                 }
             }
+
+            Refresh();
         }
 
         private async Task<bool> InitMineFieldIfNeeded(int rowStart, int colStart)
@@ -160,6 +163,8 @@ namespace WinableMinesweeper
         private void FlagButton_Click(object sender, RoutedEventArgs e)
         {
             _flagMode = !_flagMode;
+            Settings.FlagMode = _flagMode;
+
             Refresh();
         }
 
