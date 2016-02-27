@@ -47,7 +47,7 @@ namespace WinableMinesweeper.Test
 
             Assert.Equal(GameState.Defeat, minefield.GameState);
             Assert.Equal(MineState.IncorrectlyFlagged, minefield.GetCell(0, 1).GetState());
-            Assert.Equal(MineState.MineDetonated, minefield.GetCell(1, 1).GetVisibleState());
+            Assert.Equal(MineState.MineDetonated, minefield.GetCell(1, 1).GetVisibleState(false));
         }
     }
 }

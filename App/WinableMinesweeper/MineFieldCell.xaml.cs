@@ -59,6 +59,8 @@ namespace WinableMinesweeper
                 return;
             }
 
+            _previousState = mineState;
+
             switch (mineState)
             {
                 case MineState.Covered:
