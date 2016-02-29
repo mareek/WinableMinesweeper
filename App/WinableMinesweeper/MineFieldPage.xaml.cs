@@ -25,7 +25,7 @@ namespace WinableMinesweeper
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             var setup = e.Parameter as GameSetup ?? new GameSetup(Dificulty.Easy);
@@ -33,6 +33,7 @@ namespace WinableMinesweeper
             _minefield = new MineField(setup.Rows, setup.Cols, setup.MineCount);
             _flagMode = Settings.FlagMode;
             InitGrid();
+            await AdjustZoom();
         }
 
         private void InitGrid()
@@ -65,6 +66,19 @@ namespace WinableMinesweeper
             }
 
             Refresh();
+        }
+
+        private async Task AdjustZoom()
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+             {
+                 var heightFactor = ScrollZoomer.ViewportHeight / MineGrid.Height;
+                 var widthFactor = ScrollZoomer.ViewportWidth / MineGrid.Width;
+
+                 var zoomFactor = (float)Math.Min(heightFactor, widthFactor);
+                 ScrollZoomer.ZoomToFactor(zoomFactor);
+                 ScrollZoomer.MinZoomFactor = zoomFactor;
+             });
         }
 
         private async Task<bool> InitMineFieldIfNeeded(int rowStart, int colStart)

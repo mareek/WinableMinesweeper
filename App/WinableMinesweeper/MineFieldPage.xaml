@@ -20,12 +20,12 @@
         <Viewbox HorizontalAlignment="Right">
             <Button Name="FlagButton" Click="FlagButton_Click">Flag</Button>
         </Viewbox>
-        <ScrollViewer Grid.Row="1" Margin="16" ZoomMode="Enabled">
-            <Viewbox>
-                <Grid Name="MineGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer Name="ScrollZoomer" Grid.Row="1" Margin="16" ZoomMode="Enabled" 
+                      HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Hidden"
+                      VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Hidden">
+            <Grid Name="MineGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-                </Grid>
-            </Viewbox>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>
