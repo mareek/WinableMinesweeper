@@ -65,32 +65,32 @@ namespace WinableMinesweeper
             {
                 case MineState.Covered:
                     Cover();
-                    CellTextBlock.Text = "";
+                    SetText("");
                     break;
                 case MineState.CoveredFlagMode:
-                    Cover(new SolidColorBrush(new Color { R = 0, G = 0, B = 0, A = 50 }));
-                    CellTextBlock.Text = "?";
+                    Cover();
+                    SetElementVisible(GrayFlag);
                     break;
                 case MineState.Uncovered:
                     Uncover(new SolidColorBrush(GetNumberColor(MineCell.NeighbourhoodMineCount)));
-                    CellTextBlock.Text = MineCell.NeighbourhoodMineCount.ToString();
+                    SetText(MineCell.NeighbourhoodMineCount.ToString());
                     break;
                 case MineState.Flagged:
                     Cover();
-                    CellTextBlock.Text = "!";
+                    SetElementVisible(RedFlag);
                     break;
                 case MineState.IncorrectlyFlagged:
                     Cover();
-                    CellTextBlock.Text = "X";
+                    SetText("X");
                     CellBorder.Background = new SolidColorBrush(Colors.Orange);
                     break;
                 case MineState.Mine:
                     Uncover();
-                    CellTextBlock.Text = "*";
+                    SetText("*");
                     break;
                 case MineState.MineDetonated:
                     Cover();
-                    CellTextBlock.Text = "@";
+                    SetText("@");
                     CellBorder.Background = new SolidColorBrush(Colors.Red);
                     break;
             }
@@ -103,11 +103,26 @@ namespace WinableMinesweeper
             CellBorder.BorderThickness = new Thickness(0);
         }
 
-        private void Cover(Brush foreground = null)
+        private void Cover()
         {
-            CellTextBlock.Foreground = foreground ?? DefaultTextColorBrush;
+            CellTextBlock.Foreground = DefaultTextColorBrush;
             CellBorder.Background = new SolidColorBrush(Colors.LightGray);
             CellBorder.BorderThickness = new Thickness(1);
+        }
+
+        private void SetText(string text)
+        {
+            CellTextBlock.Text = text;
+            SetElementVisible(CellTextBlock);
+        }
+
+        private void SetElementVisible(FrameworkElement image)
+        {
+            CellTextBlock.Visibility = Visibility.Collapsed;
+            RedFlag.Visibility = Visibility.Collapsed;
+            GrayFlag.Visibility = Visibility.Collapsed;
+
+            image.Visibility = Visibility.Visible;
         }
 
         private Color GetNumberColor(int neighbourhoodCount)

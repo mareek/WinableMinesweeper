@@ -14,7 +14,15 @@
     Height="40">
     <Border Name="CellBorder" BorderBrush="Black" BorderThickness="1" Background="LightGray" CornerRadius="3" Margin="2">
         <Viewbox>
-            <TextBlock Name="CellTextBlock" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"></TextBlock>
+            <Grid>
+                <TextBlock Name="CellTextBlock" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"></TextBlock>
+                <Canvas Name="RedFlag" Width="512" Height="512" Visibility="Collapsed" Margin="150">
+                    <Path Data="F 1 M 416,86.153 C 454.233,86.153 488.546,65.342 512,49.6 L 512,347.445 C 488.546,363.188 454.233,384 416,384 377.767,384 343.454,372.665 320,356.922 296.546,341.182 262.233,329.847 224,329.847 185.767,329.847 151.455,349.305 128,365.045 L 128,67.2 C 151.455,51.458 185.767,32 224,32 262.233,32 296.546,43.334 320,59.076 343.454,74.818 377.767,86.153 416,86.153 Z M 64,0 C 81.673,0 96,14.327 96,32 L 96,512 32,512 32,32 C 32,14.327 46.327,0 64,0 Z" Fill="Red"/>
+                </Canvas>
+                <Canvas Name="GrayFlag" Width="512" Height="512" Margin="150" Opacity="0.2">
+                    <Path Data="F 1 M 416,86.153 C 454.233,86.153 488.546,65.342 512,49.6 L 512,347.445 C 488.546,363.188 454.233,384 416,384 377.767,384 343.454,372.665 320,356.922 296.546,341.182 262.233,329.847 224,329.847 185.767,329.847 151.455,349.305 128,365.045 L 128,67.2 C 151.455,51.458 185.767,32 224,32 262.233,32 296.546,43.334 320,59.076 343.454,74.818 377.767,86.153 416,86.153 Z M 64,0 C 81.673,0 96,14.327 96,32 L 96,512 32,512 32,32 C 32,14.327 46.327,0 64,0 Z" Fill="Black"/>
+                </Canvas>
+            </Grid>
         </Viewbox>
     </Border>
 </UserControl>
