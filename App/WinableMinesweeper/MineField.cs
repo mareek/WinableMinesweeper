@@ -8,10 +8,12 @@ namespace WinableMinesweeper
 {
     public class MineField
     {
+
         public int Rows { get; }
         public int Cols { get; }
         private readonly int _mineCount;
 
+        private readonly Random _rnd = new Random();
         private readonly Stopwatch _chrono = new Stopwatch();
 
         public MineCell[] Cells { get; }
@@ -62,11 +64,10 @@ namespace WinableMinesweeper
             var forbidenCells = new HashSet<MineCell>(GetNeighbours(rowStart, colStart));
 
             var actualMineCount = 0;
-            var rnd = new Random();
             while (actualMineCount < _mineCount)
             {
-                var row = rnd.Next(Rows - 1);
-                var col = rnd.Next(Cols - 1);
+                var row = _rnd.Next(Rows - 1);
+                var col = _rnd.Next(Cols - 1);
                 var cell = GetCell(row, col);
                 if (!cell.HasMine && !forbidenCells.Contains(cell))
                 {
