@@ -86,12 +86,11 @@ namespace WinableMinesweeper
                     break;
                 case MineState.Mine:
                     Uncover();
-                    SetText("*");
+                    SetElementVisible(Mine);
                     break;
                 case MineState.MineDetonated:
-                    Cover();
-                    SetText("@");
-                    CellBorder.Background = new SolidColorBrush(Colors.Red);
+                    Uncover();
+                    SetElementVisible(MineDetonated);
                     break;
             }
         }
@@ -121,6 +120,8 @@ namespace WinableMinesweeper
             CellTextBlock.Visibility = Visibility.Collapsed;
             RedFlag.Visibility = Visibility.Collapsed;
             GrayFlag.Visibility = Visibility.Collapsed;
+            Mine.Visibility = Visibility.Collapsed;
+            MineDetonated.Visibility = Visibility.Collapsed;
 
             image.Visibility = Visibility.Visible;
         }
