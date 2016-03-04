@@ -81,8 +81,7 @@ namespace WinableMinesweeper
                     break;
                 case MineState.IncorrectlyFlagged:
                     Cover();
-                    SetText("X");
-                    CellBorder.Background = new SolidColorBrush(Colors.Orange);
+                    SetElementVisible(FalseFlag);
                     break;
                 case MineState.Mine:
                     Uncover();
@@ -117,11 +116,10 @@ namespace WinableMinesweeper
 
         private void SetElementVisible(FrameworkElement image)
         {
-            CellTextBlock.Visibility = Visibility.Collapsed;
-            RedFlag.Visibility = Visibility.Collapsed;
-            GrayFlag.Visibility = Visibility.Collapsed;
-            Mine.Visibility = Visibility.Collapsed;
-            MineDetonated.Visibility = Visibility.Collapsed;
+            foreach (var element in ImagesContainer.Children)
+            {
+                element.Visibility = Visibility.Collapsed;
+            }
 
             image.Visibility = Visibility.Visible;
         }
